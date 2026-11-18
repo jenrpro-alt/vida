@@ -38,7 +38,7 @@ select option{color:#222}
 .circ.s{width:34px;height:34px}
 .tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .tile{border:var(--rim-w) solid var(--rim);border-radius:28px;padding:14px;color:var(--tile-text);position:relative;overflow:hidden;display:flex;flex-direction:column;gap:3px;min-height:118px;text-align:left;box-shadow:var(--shadow);animation:fadeUp .6s cubic-bezier(.2,.8,.2,1) both}
-.tile .t{position:relative;font-size:13px;font-weight:600}.tile .b{position:relative;font-size:20px;font-weight:300;line-height:1.15;margin-top:6px}.tile .f{position:relative;font-size:12px;font-weight:500;color:var(--tile-muted)}
+.tile .t{position:relative;padding-right:28px;font-size:13px;font-weight:600}.tile .b{position:relative;font-size:20px;font-weight:300;line-height:1.15;margin-top:6px}.tile .f{position:relative;font-size:12px;font-weight:500;color:var(--tile-muted)}
 .tile .i{position:absolute;top:12px;right:12px;opacity:.85}
 .dock{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom));width:calc(100% - 28px);max-width:492px;border-radius:28px;background:var(--dock);border:1.5px solid var(--frame-rim);box-shadow:var(--shadow);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);display:flex;padding:0 6px;z-index:10}
 .dock button{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 0;color:var(--muted);font:500 11px 'Poppins',system-ui}
@@ -71,6 +71,23 @@ select option{color:#222}
 .done .n{text-decoration:line-through;color:var(--muted)}
 .mapw{position:relative;width:100%;margin:0 auto;overflow:hidden;border-radius:20px}
 .hint{font-size:12.5px;color:var(--muted)}
+.hgrid,.hcol{display:flex;flex-direction:column;gap:14px}
+.ring{width:96px;height:96px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:conic-gradient(var(--accent) calc(var(--p)*1%),var(--faint) 0)}
+.ring>div{width:76px;height:76px;border-radius:50%;background:var(--base);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:22px;font-weight:300;line-height:1}.ring small{font-size:11px;color:var(--muted)}
+.hero{flex-direction:row;align-items:center;gap:16px}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.todo-s{display:flex;flex-direction:column;gap:2px}
+@media(min-width:900px){
+ main{max-width:1240px;padding:36px 28px 40px 236px}
+ .dock{left:16px;top:16px;bottom:16px;transform:none;width:196px;max-width:none;flex-direction:column;justify-content:flex-start;padding:18px 8px;gap:6px;border-radius:36px}
+ .dock button{flex:none;flex-direction:row;gap:12px;padding:13px 16px;font-size:15px;border-radius:20px;justify-content:flex-start}
+ .dock button.on{background:var(--pill);box-shadow:var(--pill-shadow)}
+ .hgrid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:16px;align-items:start}
+ .tiles{grid-template-columns:repeat(2,1fr)}
+ .status{right:22px}
+}
+@media(min-width:1300px){.tiles{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:1500px){main{zoom:1.22}.dock{zoom:1.22}.status{zoom:1.22}}
 </style>
 </head>
 <body>
@@ -277,7 +294,14 @@ select option{color:#222}
     };
 
 var STAIRS=FURN.length;
-function syncFurn(){FURN.length=STAIRS;((S.D&&S.D.furn)||[]).forEach(function(q){FURN.push(q)})}
+var CAT={f:1+Math.floor(Math.random()*2),r:0,dx:0,dy:0,on:true};
+(function(){var n={1:9,2:6};CAT.r=Math.floor(Math.random()*n[CAT.f]);CAT.dx=(Math.random()-.5)*1.2;CAT.dy=(Math.random()-.5)*1.0})();
+var CATCOL=[[236,150,60],[70,70,78],[225,225,228],[150,120,95]][Math.floor(Math.random()*4)];
+function catParts(){if(!CAT.on)return[];var b={f:CAT.f,r:CAT.r,c:CATCOL,cat:true},x=CAT.dx,y=CAT.dy;
+  function p(n,w,d,h,ox,oy,c){var k=1.6,o={f:b.f,r:b.r,n:n,w:w*k,d:d*k,h:h*k,dx:x+ox*k,dy:y+oy*k,c:c||CATCOL,cat:true};return o}
+  var dk=[CATCOL[0]*.8,CATCOL[1]*.8,CATCOL[2]*.8];
+  return[p('Gato',.42,.2,.2,0,0),p('Gato',.17,.17,.17,.3,0),p('Gato',.05,.05,.07,.35,-.06,dk),p('Gato',.05,.05,.07,.35,.06,dk),p('Gato',.3,.05,.05,-.34,.07,dk),p('Gato',.05,.05,.12,-.5,.07,dk)]}
+function syncFurn(){FURN.length=STAIRS;((S.D&&S.D.furn)||[]).forEach(function(q){FURN.push(q)});catParts().forEach(function(q){FURN.push(q)})}
 var $=function(s){return document.querySelector(s)};
 // ---------- temas (paleta del prototipo)
 var TH={
@@ -300,7 +324,8 @@ var IC={card:'M3 6h18v12H3zM3 10h18',cart:'M3 4h2l2.5 11h9L19 8H6M9 19.5h.01M16 
 var CALCOL=['#4aa3d8','#f28b1e','#8e5aa8','#2E9C86','#E8509A','#d9a400'];
 var CATS={sub:{n:'Suscripciones',p:['Netflix','Spotify','iCloud','YouTube Premium','Prueba gratis'],ev:30,ic:'card'},moto:{n:'Moto',p:['SOAT','Tecnomecánica','Impuesto','Cambio de aceite','Kit de arrastre'],ev:365,ic:'moto'},barb:{n:'Barbería',p:['Corte con Miguel'],ev:21,ic:'scissors'},aseo:{n:'Aseo y basura',p:['Sacar la basura','Aseo general','Cambiar sábanas','Limpiar cocina'],ev:7,ic:'trash'},med:{n:'Salud',p:['Cita médica','Medicamento','Examen'],ev:0,ic:'pulse'}};
 var REP=[[0,'No se repite'],[7,'Cada semana'],[14,'Cada 2 semanas'],[21,'Cada 3 semanas'],[30,'Cada mes'],[90,'Cada 3 meses'],[180,'Cada 6 meses'],[365,'Cada año']];
-var S={scr:'home',hs:[],states:{},dl:null,D:{items:[],hid:{},pin:'',map:{},furn:[],closet:[],equip:[]},cm:0,sel:'',evs:[],cals:[],todo:[],ws:null,id:1,pend:{},ready:false,unlocked:false,modal:null,mf:1,mv:'3d',mr:null,msel:'',mmove:'',fe:false,fr:null,fsel:'',
+var MOTO0={km:12480,fuel:62,oilEvery:3000,oilAt:12160,washEvery:15,washLast:'2026-11-08',chainAt:11800,chainEvery:1000};
+var S={scr:'home',hs:[],states:{},dl:null,D:{items:[],hid:{},pin:'',map:{},furn:[],closet:[],equip:[],moto:null},cm:0,sel:'',evs:[],cals:[],todo:[],ws:null,id:1,pend:{},ready:false,unlocked:false,modal:null,mf:1,mv:'3d',mr:null,msel:'',mmove:'',fe:false,fr:null,fsel:'',
   base:localStorage.getItem('vida-base')||location.origin,tok:localStorage.getItem('vida-token')||''};
 if(location.protocol==='file:')S.base='http://192.168.1.20';
 function pad(n){return(n<10?'0':'')+n}
@@ -341,8 +366,8 @@ function boot(){
   send({type:'subscribe_events',event_type:'state_changed'});
   send({type:'frontend/get_user_data',key:'vida_bitacora'},function(r){var v=r.result&&r.result.value;S.dl=(v&&v.dl)?v.dl:{};if(!(v&&v.dl))saveDl();render()});
   send({type:'frontend/get_user_data',key:'vida_data'},function(r){var v=r.result&&r.result.value;
-    if(v){S.D={items:v.items||[],hid:v.hid||{},pin:v.pin||'',hidInit:v.hidInit,map:v.map||{},furn:v.furn||[],closet:v.closet||[],equip:v.equip||[]}}
-    S.dataLoaded=true;initHid();render()});
+    if(v){S.D={items:v.items||[],hid:v.hid||{},pin:v.pin||'',hidInit:v.hidInit,map:v.map||{},furn:v.furn||[],closet:v.closet||[],equip:v.equip||[],moto:v.moto||null,seeded:v.seeded,name:v.name,cat:v.cat}}
+    seedDemo();S.dataLoaded=true;if(S.D.cat===false)CAT.on=false;initHid();render()});
 }
 function saveDl(){if(S.ready)send({type:'frontend/set_user_data',key:'vida_bitacora',value:{dl:S.dl}})}
 function saveD(){if(S.ready&&S.dataLoaded)send({type:'frontend/set_user_data',key:'vida_data',value:S.D})}
@@ -357,6 +382,19 @@ function loadEvents(){
     fetch(S.base+'/api/calendars/'+c+'?start='+encodeURIComponent(a.toISOString())+'&end='+encodeURIComponent(b.toISOString()),{headers:{Authorization:'Bearer '+S.tok}})
     .then(function(r){return r.json()}).then(function(l){(l||[]).forEach(function(e){var st=e.start.dateTime||e.start.date;all.push({t:e.summary,s:st,day:!!e.start.date,c:c})})}).catch(function(){}).then(function(){if(--left===0){all.sort(function(x,y){return x.s<y.s?-1:1});S.evs=all;softRender()}})
   });
+}
+function seedDemo(){
+  if(S.D.seeded)return;
+  S.D.moto=JSON.parse(JSON.stringify(MOTO0));
+  var d=function(n){return addDays(key(today()),n)};
+  var has=function(c){return S.D.items.some(function(i){return i.cat===c})};
+  var add=function(c,n,days,ev,al){S.D.items.push({id:'d'+Math.random().toString(36).slice(2,8),cat:c,name:n,date:d(days),ev:ev,where:'',al:al,demo:1})};
+  if(!has('moto')){add('moto','SOAT',40,365,30);add('moto','Tecnomecánica',95,365,30);add('moto','Impuesto',160,365,30);add('moto','Cambio de aceite',18,0,15);add('moto','Kit de arrastre',60,0,15)}
+  if(!has('barb'))add('barb','Corte con Miguel',9,21,3);
+  if(!has('sub')){add('sub','Netflix',6,30,7);add('sub','Spotify',14,30,7);add('sub','iCloud',22,30,7);add('sub','YouTube Premium',3,30,7)}
+  if(!has('aseo')){add('aseo','Sacar la basura',1,7,1);add('aseo','Aseo del baño',3,7,1)}
+  if(!(S.D.equip||[]).length)S.D.equip=[{id:'q1',n:'Batería A7 #1',g:'Baterías',s:0},{id:'q2',n:'Batería A7 #2',g:'Baterías',s:1},{id:'q3',n:'Pilas AA (8)',g:'Pilas',s:0},{id:'q4',n:'Saramonic',g:'Micrófonos',s:0}];
+  S.D.seeded=1;saveD();
 }
 function initHid(){if(!S.dataLoaded||!S.cals.length||S.D.hidInit)return;S.cals.forEach(function(c){if(/holidays in|d[ií]as feriados|cumplea/i.test(c.n))S.D.hid[c.id]=1});S.D.hidInit=1;saveD()}
 function todoEnt(){var t=find(/lista de la compra|shopping/i,['todo'])[0];return t&&t.entity_id}
@@ -410,28 +448,32 @@ var MES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','sept
 SCREENS.home=function(){
   var now=new Date(),h24=now.getHours(),greet=h24<12?'Buenos días':h24<19?'Buenas tardes':'Buenas noches';
   var ds=now.toLocaleDateString('es-CO',{weekday:'long',day:'numeric',month:'long'});ds=ds.charAt(0).toUpperCase()+ds.slice(1);
-  var out='<div style="display:flex;flex-direction:column;gap:2px;animation:fadeUp .5s both"><span class="lab" style="letter-spacing:.1em">'+esc(ds)+'</span><span style="font-size:44px;font-weight:300;letter-spacing:-.03em;line-height:1.1">'+esc(now.toLocaleTimeString('es-CO',{hour:'numeric',minute:'2-digit'}))+'</span><span style="font-size:22px;font-weight:300">'+greet+', <b style="font-weight:600">Juan</b></span></div>';
+  var out='<div class="hgrid"><div class="hcol"><div style="display:flex;flex-direction:column;gap:2px;animation:fadeUp .5s both"><span class="lab" style="letter-spacing:.1em">'+esc(ds)+'</span><span style="font-size:44px;font-weight:300;letter-spacing:-.03em;line-height:1.1">'+esc(now.toLocaleTimeString('es-CO',{hour:'numeric',minute:'2-digit'}))+'</span><span style="font-size:22px;font-weight:300">'+greet+', <b style="font-weight:600">'+esc(S.D.name||'Juan')+'</b></span></div>';
   var subs=itemsOf('sub'),soon=subs.filter(function(i){return dleft(i.date)<=7}).length;
   var pend=S.todo.filter(function(i){return i.status!=='completed'});
   var devs=mapDevs(),onN=devs.filter(function(d){return d.on&&d.type!=='sensor'&&d.type!=='robot'}).length,bi=bartoloInfo();
   var eq=S.D.equip||[],eqOk=eq.filter(function(e){return e.s===0}).length;
-  var moto=itemsOf('moto'),mn=moto[0],bb=itemsOf('barb')[0],bd=bb?dleft(bb.date):null;
+  var moto=itemsOf('moto'),mn=moto[0],M=S.D.moto,bb=itemsOf('barb')[0],bd=bb?dleft(bb.date):null;
   var T=[
    ['su','Suscripciones',IC.card,pl(subs.length,'activa','activas'),soon?(soon===1?'1 vence esta semana':soon+' vencen esta semana'):(subs.length?'Todo al día':'Registra las tuyas'),'subs'],
    ['re','Recompras',IC.cart,pend.length+' por comprar',pend.slice(0,2).map(function(i){return i.summary}).join(', ')||'Nada por ahora','compras'],
    ['eq','Equipos',IC.battery,eq.length?eqOk+' de '+eq.length:'Sin equipos',eq.length?'listos para grabar':'Agrégalos','equipos'],
-   ['mo','Moto',IC.fuel,mn?mn.name:'Apache RTR 160',mn?(dleft(mn.date)<0?'Vencido hace '+(-dleft(mn.date))+' d':'en '+dleft(mn.date)+' días'):'Sin fechas registradas','moto'],
+   ['mo','Moto',IC.fuel,M?M.km.toLocaleString('es-CO')+' km':'Apache RTR 160',M?'Aceite en '+Math.max(0,M.oilAt+M.oilEvery-M.km)+' km':(mn?mn.name+' · en '+dleft(mn.date)+' d':'Sin datos'),'moto'],
    ['ca','Casa',IC.home,pl(onN,'encendido','encendidos'),bi&&bi.bat!=null?'Bartolo '+bi.bat+' %':(bi?'Bartolo '+(STM[bi.st]||bi.st).toLowerCase():'Sin Bartolo'),'casa'],
    ['ba','Barbería',IC.scissors,bb?(bd<=0?'Ya toca':bd+' días'):'Sin registro','Miguel · cada '+(bb&&bb.ev?bb.ev:21)+' días','barb'],
    ['as','Fraat',IC.card,'Sin conectar','Próximamente','fraat'],
    ['sa','Salud',IC.pulse,S.unlocked?'Desbloqueado':'Protegido','Protegido con PIN','med']];
+  var pct=eq.length?Math.round(eqOk*100/eq.length):0,nev=S.evs.filter(function(e){return !S.D.hid[e.c]})[0];
+  out+='<div class="card hero"><div class="ring" style="--p:'+pct+'"><div>'+pct+'%<small>listo</small></div></div><div class="rt"><span class="lab">Prioridad'+(nev?' · '+esc(new Date(nev.s.length>10?nev.s:nev.s+'T00:00').toLocaleDateString('es-CO',{weekday:'short',day:'numeric'})):'')+'</span><div style="font-size:22px;font-weight:300;line-height:1.2;margin:4px 0">'+(nev?esc(nev.t):'Sin eventos próximos')+'</div><div class="hint">Equipos: '+eqOk+' de '+eq.length+' listos</div></div></div>';
   out+='<div class="tiles">'+T.map(function(t){return '<button class="tile" data-go="'+t[5]+'" style="'+tileBg(t[0])+'"><span class="i">'+ic(t[2],22)+'</span><span class="t">'+t[1]+'</span><span class="b">'+esc(t[3])+'</span><span class="f">'+esc(t[4])+'</span></button>'}).join('')+'</div>';
+  out+='</div><div class="hcol">';
   var al=alerts();
   if(bi)find(/bartolo.*vida [uú]til/i,['sensor']).forEach(function(e){if(parseFloat(e.state)===0)al.push({name:nm(e).replace(/^bartolo\s*/i,'')+' · reemplazar',cat:'bartolo',nodate:1})});
   if(al.length)out+=card('Hoy',rows(al.slice(0,6).map(function(it){return row({ic:it.nodate?IC.robot:IC[CATS[it.cat].ic],t:esc(it.name),s:it.nodate?'Bartolo':CATS[it.cat].n+(it.where?' · '+esc(it.where):''),r:it.nodate?'<span class="badge bad">Revisar</span>':itemBadge(it),at:'data-go="'+(it.nodate?'bartolo':it.cat==='sub'?'subs':it.cat)+'"'})})));
   out+=bitacoraCard();
   out+=agendaCard();
-  return out;
+  out+=pendCard(true);
+  return out+'</div></div>';
 };
 function bitacoraCard(){
   var now=new Date(),vd=new Date(now.getFullYear(),now.getMonth()+S.cm,1),dl=S.dl||{},tk=key(now),lead=vd.getDay(),dim=new Date(vd.getFullYear(),vd.getMonth()+1,0).getDate(),h='';
@@ -512,6 +554,7 @@ SCREENS.menu=function(){
   var h=hdr('Menú','Todo en un solo lugar');
   h+=card('Módulos',rows([M(IC.card,'Suscripciones',pl(subs.length,'activa','activas'),'subs'),M(IC.cart,'Recompras',pend.length+' por comprar','compras'),M(IC.battery,'Equipos',eq.length+' registrados','equipos'),M(IC.moto,'Moto','Apache RTR 160 4V','moto'),M(IC.scissors,'Barbería','Miguel','barb'),M(IC.trash,'Aseo y basura','Tareas y horarios','aseo'),M(IC.hanger,'Closet',(S.D.closet||[]).length+' prendas','closet'),M(IC.card,'Fraat','Sin conectar','fraat'),M(IC.pulse,'Salud','Protegido','med')]));
   h+=card('Casa',rows([M(IC.map,'Plano 3D / cenital','Dos plantas','casa'),M(IC.robot,'Bartolo','Aspiradora','bartolo')]));
+  h+=card('Ajustes',rows([M(IC.menu,'Ajustes','Perfil, PIN, respaldo, gato','ajustes'),M(IC.pulse,'Lo que falta','Pendientes para completar Vida','pend')]));
   var th=theme;
   h+=card('Apariencia',chips([['noche','Noche'],['amanecer','Amanecer'],['bruma','Bruma']].map(function(t){return chip(t[1],th===t[0],'data-th="'+t[0]+'"')})));
   h+=card('Conexión','<div class="rows">'+row({t:'Hub',s:esc(S.base),r:'<span class="'+(S.ready?'on-t':'bad-t')+'">'+(S.ready?'Conectado':'Sin conexión')+'</span>'})+'</div><button class="btn w f" id="logout">Desconectar este dispositivo</button>');
@@ -532,6 +575,57 @@ function modScreen(cat){return function(){
   if(cat==='med')h+='<button class="btn f" id="plock">Bloquear sección</button>';
   return h};}
 ['sub','moto','barb','aseo','med'].forEach(function(c){SCREENS[c==='sub'?'subs':c]=modScreen(c)});
+// ---------- Moto (datos ajustables)
+SCREENS.moto=function(){
+  var M=S.D.moto||MOTO0,C=CATS.moto,list=itemsOf('moto');
+  var oil=M.oilAt+M.oilEvery-M.km,chain=M.chainAt+M.chainEvery-M.km,wash=M.washEvery-(-dleft(M.washLast));
+  var h=hdr('Moto','TVS Apache RTR 160 4V');
+  h+=card('Estado','<div class="stats"><div><b>'+M.km.toLocaleString('es-CO')+'</b><span>km</span></div><div><b>'+M.fuel+' %</b><span>Gasolina</span></div></div><div class="bar"><i style="width:'+M.fuel+'%"></i></div>'+
+   rows([row({ic:IC.fuel,t:'Cambio de aceite',s:'Cada '+M.oilEvery+' km',r:'<span class="'+(oil<=300?'bad-t':'off-t')+'">'+(oil<=0?'Ya toca':'en '+oil+' km')+'</span>'}),
+         row({ic:IC.moto,t:'Kit de arrastre',s:'Lubricar cada '+M.chainEvery+' km',r:'<span class="'+(chain<=100?'bad-t':'off-t')+'">'+(chain<=0?'Ya toca':'en '+chain+' km')+'</span>'}),
+         row({ic:IC.cal,t:'Lavado',s:'Cada '+M.washEvery+' días',r:'<span class="'+(wash<=0?'bad-t':'off-t')+'">'+(wash<=0?'Ya toca':'en '+wash+' d')+'</span>'})])+
+   '<button class="btn p f" id="mo_e">Ajustar datos de la moto</button>');
+  h+=card('Documentos y fechas',(list.length?rows(list.map(function(it){return row({ic:IC.moto,t:esc(it.name)+(it.demo?' <span class="badge">ejemplo</span>':''),s:new Date(it.date+'T00:00').toLocaleDateString('es-CO',{day:'numeric',month:'short',year:'numeric'}),r:itemBadge(it),at:'data-it="'+it.id+'"'})})):'<div class="empty">Nada registrado.</div>')+'<button class="btn f" data-add="moto">+ Agregar</button>');
+  return h};
+function openMoto(){
+  var M=S.D.moto||JSON.parse(JSON.stringify(MOTO0)),F=[['km','Kilometraje actual (km)'],['fuel','Gasolina (%)'],['oilAt','Último cambio de aceite (km)'],['oilEvery','Aceite cada (km)'],['chainAt','Último lubricado de cadena (km)'],['chainEvery','Cadena cada (km)'],['washEvery','Lavar cada (días)']];
+  modalShell('<div class="tt" style="font-size:20px;font-weight:600">Datos de la moto</div>'+F.map(function(f){return '<label>'+f[1]+'</label><input id="mo_'+f[0]+'" type="number" inputmode="numeric" value="'+M[f[0]]+'">'}).join('')+'<label>Último lavado</label><input id="mo_washLast" type="date" value="'+M.washLast+'"><div class="acts"><button class="btn p" id="mo_s">Guardar</button><button class="btn" id="mo_x">Cerrar</button></div>');
+  $('#mo_x').onclick=closeModal;
+  $('#mo_s').onclick=function(){F.forEach(function(f){var v=parseFloat($('#mo_'+f[0]).value);if(!isNaN(v))M[f[0]]=v});M.fuel=Math.max(0,Math.min(100,M.fuel));M.washLast=$('#mo_washLast').value||M.washLast;M.adj=1;S.D.moto=M;saveD();closeModal()}}
+// ---------- Pendientes
+function pendList(){
+  var devs=mapDevs(),un=devs.filter(function(d){return d.un}),demo=S.D.items.filter(function(i){return i.demo}).length;
+  var P=[
+   [S.ready,'Conexión con Home Assistant','Conectado',null],
+   [S.cals.length>0,'Calendarios','Conecta Google Calendar en HA','casa'],
+   [!un.length,'Dispositivos Tuya sin señal',un.length?un.map(function(d){return d.name}).join(', ')+': revisa la app Tuya':'Todos responden','casa'],
+   [!find(/bartolo.*vida [uú]til/i,['sensor']).some(function(e){return parseFloat(e.state)===0}),'Repuestos de Bartolo','Filtro, cepillo o gamuza en 0 h: reemplazar y reiniciar contador en la app Tuya','bartolo'],
+   [!!S.D.pin,'PIN de Salud','Crea tu PIN','med'],
+   [demo===0,'Datos de ejemplo','Tienes '+demo+' registros de ejemplo: ajústalos con tus fechas reales','menu'],
+   [!!(S.D.moto&&S.D.moto.adj),'Datos de la moto','Ajusta kilometraje y fechas reales','moto'],
+   [Object.keys(S.dl||{}).length>3,'Bitácora','Marca tus días de oficina, casa y finde','home'],
+   [(S.D.closet||[]).length>0,'Closet','Agrega tus prendas','closet'],
+   [false,'Fraat','Necesita un endpoint que envíe datos a Vida','fraat'],
+   [false,'Gato Lio real','Falta el archivo .glb (por ahora hay un gato aleatorio en el mapa)','casa'],
+   [false,'Typhur, CareCam, Samsung Health','Integraciones aún sin conectar a HA','ajustes']];
+  return P}
+function pendCard(small){
+  var P=pendList(),todo=P.filter(function(p){return !p[0]});
+  if(small)return card('Lo que falta · '+todo.length,rows(todo.slice(0,4).map(function(p){return row({dot:'',t:esc(p[1]),s:esc(p[2]),at:'data-go="'+(p[3]||'pend')+'"'})}))+'<button class="btn f" data-go="pend">Ver todo</button>');
+  return card('Por completar · '+todo.length,rows(todo.map(function(p){return row({dot:'',t:esc(p[1]),s:esc(p[2]),at:p[3]?'data-go="'+p[3]+'"':''})})))+(P.length-todo.length?card('Listo · '+(P.length-todo.length),rows(P.filter(function(p){return p[0]}).map(function(p){return row({dot:'on',t:esc(p[1]),s:esc(p[2])})}))):'')}
+SCREENS.pend=function(){return hdr('Lo que falta','Para que Vida quede completa')+pendCard(false)};
+// ---------- Ajustes
+SCREENS.ajustes=function(){
+  var th=theme;
+  var h=hdr('Ajustes','Vida en este dispositivo');
+  h+=card('Perfil','<label class="hint">Tu nombre</label><input id="a_name" value="'+esc(S.D.name||'Juan')+'"><button class="btn f" id="a_ns">Guardar nombre</button>');
+  h+=card('Apariencia',chips([['noche','Noche'],['amanecer','Amanecer'],['bruma','Bruma']].map(function(t){return chip(t[1],th===t[0],'data-th="'+t[0]+'"')})));
+  h+=card('Mapa 3D',chips([chip('Gato visible',CAT.on,'data-cat="1"')])+'<span class="hint">Un gato aleatorio aparece en una habitación distinta cada vez que abres Vida.</span>');
+  h+=card('Seguridad',rows([row({ic:IC.lock,t:'PIN de Salud',s:S.D.pin?'Definido':'Sin definir'})])+(S.D.pin?'<button class="btn w f" id="a_pin">Quitar PIN</button>':'<button class="btn f" data-go="med">Crear PIN</button>'));
+  h+=card('Respaldo','<span class="hint">Copia todos tus datos (suscripciones, moto, equipos, closet) para guardarlos o pasarlos a otro dispositivo.</span>'+chips(['<button class="btn" id="a_exp">Copiar respaldo</button>','<button class="btn" id="a_imp">Restaurar</button>'])+'<textarea id="a_ta" style="display:none;width:100%;height:110px;border-radius:16px;border:1px solid var(--rim);background:var(--pill);color:var(--text);padding:10px;font:12px monospace" placeholder="Pega aquí el respaldo"></textarea>');
+  h+=card('Datos de ejemplo','<span class="hint">Borra los registros marcados como ejemplo para empezar con tus datos reales.</span><button class="btn w f" id="a_demo">Borrar ejemplos</button>');
+  h+=card('Conexión',rows([row({t:'Hub',s:esc(S.base),r:'<span class="'+(S.ready?'on-t':'bad-t')+'">'+(S.ready?'Conectado':'Sin conexión')+'</span>'})])+'<button class="btn w f" id="logout">Desconectar este dispositivo</button>');
+  return h};
 function hashPin(p){var h=2166136261;for(var i=0;i<p.length;i++){h^=p.charCodeAt(i);h=Math.imul(h,16777619)}return String(h>>>0)}
 // ---------- Recompras
 SCREENS.compras=function(){
@@ -635,6 +729,13 @@ function bind(){
   q('[data-cladd]',function(b){b.onclick=function(){openCloset()}});
   q('[data-eq]',function(b){b.onclick=function(){var it=S.D.equip.filter(function(x){return x.id===b.dataset.eq})[0];if(it)openEquip(JSON.parse(JSON.stringify(it)))}});
   q('[data-eqadd]',function(b){b.onclick=function(){openEquip()}});
+  var me=$('#mo_e');if(me)me.onclick=openMoto;
+  var ns=$('#a_ns');if(ns)ns.onclick=function(){S.D.name=$('#a_name').value.trim()||'Juan';saveD();render()};
+  q('[data-cat]',function(b){b.onclick=function(){CAT.on=!CAT.on;S.D.cat=CAT.on;saveD();render()}});
+  var ap=$('#a_pin');if(ap)ap.onclick=function(){if(confirm('¿Quitar el PIN?')){S.D.pin='';S.unlocked=false;saveD();render()}};
+  var ae=$('#a_exp');if(ae)ae.onclick=function(){var j=JSON.stringify({D:S.D,dl:S.dl});var ta=$('#a_ta');ta.style.display='block';ta.value=j;ta.select();try{navigator.clipboard.writeText(j)}catch(e){try{document.execCommand('copy')}catch(e2){}}ae.textContent='Copiado'};
+  var ai=$('#a_imp');if(ai)ai.onclick=function(){var ta=$('#a_ta');if(ta.style.display==='none'){ta.style.display='block';ta.value='';ai.textContent='Aplicar';return}try{var o=JSON.parse(ta.value);if(!o.D)throw 0;S.D=o.D;if(o.dl){S.dl=o.dl;saveDl()}saveD();render()}catch(e){ai.textContent='Respaldo inválido'}};
+  var ad=$('#a_demo');if(ad)ad.onclick=function(){if(confirm('¿Borrar los registros de ejemplo?')){S.D.items=S.D.items.filter(function(i){return !i.demo});saveD();render()}};
   var lo=$('#logout');if(lo)lo.onclick=function(){if(confirm('¿Desconectar este dispositivo?')){localStorage.removeItem('vida-token');location.reload()}};
 }
 applyTheme(theme);
