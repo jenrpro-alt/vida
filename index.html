@@ -88,7 +88,12 @@ body.dh .mapw{background:var(--bg-map);border:1px solid var(--border);border-rad
 .mapi .pin.clu{transform:translate(-50%,-50%) scale(calc(1/var(--z,1)))}
 .zbtn{font-size:20px;line-height:1}
 .bhero{position:relative;overflow:hidden;border-radius:var(--radius-card-lg);min-height:270px;background:#202226;border:1px solid rgba(255,255,255,.12);padding:var(--space-6);margin-bottom:var(--space-3)}
-.bhero img{position:absolute;right:-30%;bottom:-14%;width:86%;height:auto;max-width:none;pointer-events:none;opacity:.95;-webkit-mask-image:radial-gradient(closest-side,#000 60%,transparent 100%);mask-image:radial-gradient(closest-side,#000 60%,transparent 100%)}
+.bhero img{position:absolute;right:-170px;bottom:-30px;height:340px;width:auto;max-width:none;object-fit:contain;pointer-events:none;opacity:.95;-webkit-mask-image:radial-gradient(closest-side,#000 62%,transparent 100%);mask-image:radial-gradient(closest-side,#000 62%,transparent 100%)}
+@media(min-width:700px){.bhero img{right:3%;bottom:-30px;height:360px}.bhero{min-height:300px}}
+.bhero.sm{min-height:150px;padding:var(--space-4) var(--space-6);cursor:pointer;text-align:left;display:block;width:100%;color:inherit;font:inherit}
+.bhero.sm img{height:200px;right:-50px;bottom:-40px}
+@media(min-width:700px){.bhero.sm img{height:210px;right:2%;bottom:-45px}.bhero.sm{min-height:160px}}
+.bhero.sm h2{font-size:26px;line-height:30px}.bhero.sm b{font-size:20px;line-height:24px}
 .bhero .bl{position:relative;z-index:1;display:flex;flex-direction:column;gap:var(--space-3)}
 .bhero small{color:var(--text-secondary);font-size:14px;line-height:18px;display:block}
 .bhero b{font-weight:400;font-size:24px;line-height:28px;display:block}
@@ -1597,6 +1602,7 @@ SCREENS.home=function(){
   out+='<div class="card hero"><div class="ring" style="--p:'+pct+'"><div>'+pct+'%<small>listo</small></div></div><div class="rt"><span class="lab">Prioridad'+(nev?' · '+esc(new Date(nev.s.length>10?nev.s:nev.s+'T00:00').toLocaleDateString('es-CO',{weekday:'short',day:'numeric'})):'')+'</span><div style="font-size:20px;line-height:26px;font-weight:500;letter-spacing:-.01em;margin:4px 0">'+(nev?esc(nev.t):'Sin eventos próximos')+'</div><div class="hint">Equipos: '+eqOk+' de '+eq.length+' listos</div></div></div>';
   out+='<div class="tiles">'+T.map(function(t){return '<button class="tile" data-go="'+t[5]+'"><span class="t">'+t[1]+'</span><span class="go">'+ic('M7 17L17 7M9 7h8v8',18)+'</span><span class="b">'+esc(t[3])+'</span><span class="f">'+esc(t[4])+'</span></button>'}).join('')+'</div>';
   out+='</div><div class="hcol">';
+  if(bi)out+='<button class="bhero sm" data-go="bartolo"><img src="'+BART_IMG+'" alt="" draggable="false"><div class="bl"><div><small>BPMIG</small><h2>Bartolo</h2></div><div style="display:flex;gap:var(--space-6)"><div><small>Estado</small><b>'+esc(STM[bi.st]||bi.st)+'</b></div><div><small>Batería</small><b>'+(bi.bat!=null?bi.bat+' %':'—')+'</b></div></div></div></button>';
   var al=alerts();
   if(bi)find(/bartolo.*vida [uú]til/i,['sensor']).forEach(function(e){if(parseFloat(e.state)===0)al.push({name:nm(e).replace(/^bartolo\s*/i,'')+' · reemplazar',cat:'bartolo',nodate:1})});
   if(tuyaDown())al.unshift({name:'Tuya se desconectó',cat:'bartolo',nodate:1,sub:'Reconecta la integración en Home Assistant',go:'pend'});
