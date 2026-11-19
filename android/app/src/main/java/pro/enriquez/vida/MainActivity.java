@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -38,6 +41,9 @@ public class MainActivity extends Activity {
     private final Handler h = new Handler(Looper.getMainLooper());
     private int tries = 0;
     private boolean failed = false;
+    private boolean weConnected = false;   // el VPN lo encendió esta app
+    private boolean openingTailscale = false;
+    private boolean started = false;
 
     @Override
     protected void onCreate(Bundle b) {
@@ -97,6 +103,7 @@ public class MainActivity extends Activity {
         openTs.setText("Abrir Tailscale");
         openTs.setVisibility(View.GONE);
         openTs.setOnClickListener(v -> {
+            openingTailscale = true;
             Intent i = getPackageManager().getLaunchIntentForPackage("com.tailscale.ipn");
             if (i != null) startActivity(i);
         });
@@ -105,15 +112,34 @@ public class MainActivity extends Activity {
 
         setContentView(root);
         immersive();
+        started = true;
         start();
     }
 
-    private void connectVpn() {
+    private boolean vpnActive() {
         try {
-            Intent i = new Intent("com.tailscale.ipn.CONNECT_VPN");
+            ConnectivityManager cm = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+            for (Network n : cm.getAllNetworks()) {
+                NetworkCapabilities c = cm.getNetworkCapabilities(n);
+                if (c != null && c.hasTransport(NetworkCapabilities.TRANSPORT_VPN)) return true;
+            }
+        } catch (Exception ignored) { }
+        return false;
+    }
+
+    private void sendTs(String action) {
+        try {
+            Intent i = new Intent(action);
             i.setPackage("com.tailscale.ipn");
             sendBroadcast(i);
         } catch (Exception ignored) { }
+    }
+
+    // Enciende Tailscale solo si estaba apagado; así sabemos si debemos apagarlo al salir.
+    private void connectVpn() {
+        if (vpnActive()) return;
+        weConnected = true;
+        sendTs("com.tailscale.ipn.CONNECT_VPN");
     }
 
     private void start() {
@@ -171,10 +197,26 @@ public class MainActivity extends Activity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        openingTailscale = false;
+        if (started && !weConnected) connectVpn();   // al volver a la app
+        else if (started && weConnected && !vpnActive()) sendTs("com.tailscale.ipn.CONNECT_VPN");
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
-        connectVpn();
         web.onResume();
+    }
+
+    // Al salir de la app, apaga Tailscale si lo encendió ella.
+    @Override
+    protected void onStop() {
+        if (weConnected && !openingTailscale) {
+            sendTs("com.tailscale.ipn.DISCONNECT_VPN");
+        }
+        super.onStop();
     }
 
     @Override
