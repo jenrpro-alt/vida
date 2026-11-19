@@ -1,0 +1,25 @@
+plugins { id 'com.android.application' }
+android {
+    namespace 'pro.enriquez.vida'
+    compileSdk 34
+    defaultConfig {
+        applicationId 'pro.enriquez.vida'
+        minSdk 26
+        targetSdk 34
+        versionCode 1
+        versionName '1.0'
+    }
+    signingConfigs {
+        vida {
+            storeFile file('vida.keystore')
+            storePassword 'vida-hub-2026'
+            keyAlias 'vida'
+            keyPassword 'vida-hub-2026'
+        }
+    }
+    buildTypes {
+        release { signingConfig signingConfigs.vida; minifyEnabled false }
+    }
+    lint { checkReleaseBuilds false; abortOnError false }
+    compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
+}
