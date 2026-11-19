@@ -7,7 +7,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;600&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
 <title>Vida</title>
 <style>
 /* ===== TOKENS "Ember Glass" (única fuente de verdad; todo lo demás usa var()) ===== */
@@ -23,10 +23,66 @@
  --font-sans:"Hanken Grotesk","Geist",system-ui,sans-serif;
  /* estados (NO definidos en el documento: valores provisionales, pendientes de tu confirmación) */
  --state-ok:#7EE0B5;--state-bad:#FF8A98;--state-warn:#FFC46B;
+ /* ===== TOKENS "Night Dollhouse" (domótica: pantallas Casa y Bartolo; no se mezclan con Ember) ===== */
+ --bg-app:#0A1020;--surface-1:#0F1829;--surface-2:#161F33;--surface-3:#1D2740;--border:#26324D;--field-active:#FFFFFF;
+ --dh-text-secondary:#8D98AD;--dh-text-on-light:#0B1220;
+ --accent:#3AA0F5;--accent-soft:rgba(58,160,245,0.18);
+ --state-light:#F5C518;--state-temp:#F08A24;--state-energy:#3B82F6;--state-camera:#94A3B8;--state-security:#94A3B8;--state-off:#475569;
+ --room-blue:#7F9CF0;--room-green:#8FD18A;--room-yellow:#F2DC8E;--room-teal:#7FCFC4;--room-pink:#F4A6C8;--room-sky:#8FD3EE;--room-azure:#7EB8F0;--room-mint:#A8DCC8;--room-sage:#C9DDB0;--room-lilac:#B7A8E0;
+ --wall-top:#F4F6F8;--wall-side:#D5DAE1;--plate-base:#C8CFD9;
+ --bg-map:radial-gradient(90% 80% at 50% 45%,#111B31 0%,#0A1020 70%);
+ --dh-radius-field:10px;--dh-radius-card:10px;--dh-radius-bar:14px;
+ --shadow-pin:0 6px 10px rgba(0,0,0,0.35);--shadow-float:0 12px 24px rgba(0,0,0,0.35);
+ --font-dh:"Figtree","Plus Jakarta Sans",system-ui,sans-serif;
  /* alias internos hacia los tokens (el código de pantallas usa estos nombres) */
  --text:var(--text-primary);--muted:var(--text-secondary);--faint:rgba(255,255,255,0.14);--tile-text:var(--text-primary);
  --ok:var(--state-ok);--bad:var(--state-bad);--warn:var(--state-warn);
 }
+/* --- Night Dollhouse: reasigna los alias solo en Casa y Bartolo --- */
+body.dh{--font-sans:var(--font-dh);--text-secondary:var(--dh-text-secondary);--text-on-light:var(--dh-text-on-light);--glass-fill:var(--surface-2);--glass-fill-strong:var(--surface-3);--glass-border:var(--border);--glass-blur:none;--shadow-glass:none;--active-fill:var(--field-active);--radius-card-md:var(--dh-radius-card);--radius-card-lg:var(--dh-radius-bar);--faint:var(--surface-3);--muted:var(--dh-text-secondary);background:var(--bg-app);font-family:var(--font-dh)}
+body.dh::before{display:none}
+body.dh .card{background:var(--surface-2);backdrop-filter:none;-webkit-backdrop-filter:none}
+body.dh input,body.dh select{background:var(--surface-3);border-radius:var(--dh-radius-field);backdrop-filter:none;-webkit-backdrop-filter:none}
+body.dh .btn,body.dh .circ{backdrop-filter:none;-webkit-backdrop-filter:none}
+body.dh .btn{background:var(--surface-3);border-radius:var(--dh-radius-field)}
+body.dh .btn.p{background:var(--accent);border-color:transparent;color:#fff}
+body.dh .chip{background:var(--surface-3);border-radius:var(--dh-radius-field);height:36px;font-size:14px}
+body.dh .chip.on{background:var(--accent-soft);color:var(--accent);border:1px solid var(--accent)}
+body.dh .circ{background:var(--surface-3)}
+body.dh .dock{background:var(--surface-1);border:1px solid var(--border);border-radius:var(--dh-radius-bar);backdrop-filter:none;-webkit-backdrop-filter:none}
+body.dh .dock button{border-radius:var(--dh-radius-field)}
+body.dh .dock button.on{background:var(--accent-soft);color:var(--accent)}
+body.dh .bar i{background:var(--accent)}
+body.dh .ic{background:var(--surface-3);border-radius:var(--dh-radius-field)}
+body.dh .sheet{background:var(--surface-1);backdrop-filter:none;-webkit-backdrop-filter:none}
+.tabs{display:flex;gap:var(--space-6);border-bottom:1px solid var(--border);margin:0 calc(var(--space-2)*-1)}
+.tabs button{height:44px;padding:0 var(--space-2);font:500 16px/20px var(--font-sans);color:rgba(255,255,255,.7);border-bottom:2px solid transparent;margin-bottom:-1px}
+.tabs button.on{color:var(--accent);border-bottom-color:var(--accent)}
+.dhg{display:flex;flex-direction:column;gap:var(--space-3)}
+.panel{display:flex;flex-direction:column;gap:var(--space-3)}
+.views{display:flex;gap:var(--space-2)}
+.views button{width:40px;height:40px;border-radius:50%;background:var(--surface-3);display:flex;align-items:center;justify-content:center;color:#fff;border:2px solid transparent}
+.views button.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+.fld{display:flex;flex-direction:column;gap:var(--space-2)}
+.fld select{margin:0;height:40px;padding:0 var(--space-3);font:500 14px/18px var(--font-sans)}
+.fld select.act{background:var(--field-active);color:var(--text-on-light);border-color:transparent}
+.scard{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-3);background:var(--surface-2);border:1px solid var(--border);border-radius:var(--dh-radius-card);width:100%;text-align:left}
+.scard.on{border-color:var(--accent);background:var(--accent-soft)}
+.scard i{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--surface-3);flex-shrink:0}
+.scard b{display:block;font-size:14px;line-height:18px;font-weight:500}.scard small{display:block;font-size:12px;line-height:16px;color:var(--dh-text-secondary)}
+.scenes{display:flex;align-items:stretch;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--dh-radius-bar);box-shadow:var(--shadow-float);padding:var(--space-3) var(--space-4);align-self:center;max-width:100%;overflow:auto}
+.scenes button{display:flex;align-items:center;gap:var(--space-2);padding:0 var(--space-3);font:500 14px/18px var(--font-sans);white-space:nowrap}
+.scenes button+button{border-left:1px solid var(--border)}
+.outl{height:32px;padding:0 var(--space-3);border-radius:var(--radius-pill);border:1px solid var(--border);font:400 12px var(--font-sans);align-self:flex-start}
+.outl.on{border-color:var(--accent);color:var(--accent)}
+body.dh .mapw{background:var(--bg-map);border:1px solid var(--border);border-radius:var(--dh-radius-card)}
+.pin{position:absolute;width:30px;height:38px;padding:0;transform:translate(-50%,-100%) scale(var(--sc,1));transform-origin:50% 100%;transition:transform .15s;z-index:2}
+.pin:hover{--sc:1.1}.pin.sel{--sc:1.15}
+.pin i{position:absolute;left:0;top:0;width:30px;height:30px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:#fff;box-shadow:var(--shadow-pin)}
+.pin.sel i{box-shadow:var(--shadow-pin),0 0 0 6px var(--accent-soft)}
+.pin svg{position:absolute;left:7px;top:6px;color:var(--pc)}
+.pin.dim{opacity:.3}
+.pin.off::after{content:"";position:absolute;right:-1px;top:-1px;width:9px;height:9px;border-radius:50%;background:var(--state-bad,#FF8A98);border:1.5px solid #fff}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;min-height:100%}
 body{font-family:var(--font-sans);font-size:15px;line-height:22px;color:var(--text-primary);background:var(--bg-void) var(--bg-screen) fixed no-repeat;min-height:100vh}
@@ -112,6 +168,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
  .tiles{grid-template-columns:repeat(2,1fr)}
  .status{right:22px}
 }
+@media(min-width:900px){.dhg{display:grid;grid-template-columns:240px minmax(0,1fr);gap:var(--space-4);align-items:start}.dhg .scenes{grid-column:2;grid-row:1}.dhg .dhmap{grid-column:2;grid-row:2}.dhg .panel{grid-column:1;grid-row:1/3}}
 @media(min-width:1300px){.tiles{grid-template-columns:repeat(3,1fr)}}
 @media(min-width:1500px){main{zoom:1.22}.dock{zoom:1.22}.status{zoom:1.22}}
 </style>
@@ -124,20 +181,1013 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
 <script>
 (function(){
 'use strict';
+    const PLAN = {
+ "_doc": "Plano de la casa. Unidades: px del plano (43 px = 1 m). Editable: habitaciones (poly), colores (token room-*), aperturas y dispositivos.",
+ "scale": {
+  "pxPerMeter": 43,
+  "floorHeight": 103,
+  "floorGap": 112
+ },
+ "walls": {
+  "heightBack": 0.15,
+  "heightFront": 0.07,
+  "topColor": "wall-top",
+  "sideColor": "wall-side",
+  "slabColor": "plate-base",
+  "slabDepth": 10
+ },
+ "floors": {
+  "1": {
+   "label": "1F",
+   "name": "Planta 1",
+   "rooms": [
+    {
+     "id": "f1-r0",
+     "name": "Comedor",
+     "color": "room-sky",
+     "poly": [
+      [
+       7,
+       -161
+      ],
+      [
+       7,
+       9
+      ],
+      [
+       42,
+       9
+      ],
+      [
+       42,
+       23
+      ],
+      [
+       124,
+       23
+      ],
+      [
+       124,
+       -100
+      ],
+      [
+       110,
+       -100
+      ],
+      [
+       110,
+       -134
+      ],
+      [
+       122,
+       -134
+      ],
+      [
+       122,
+       -161
+      ]
+     ]
+    },
+    {
+     "id": "f1-r1",
+     "name": "Sala",
+     "color": "room-green",
+     "poly": [
+      [
+       8,
+       98
+      ],
+      [
+       8,
+       192
+      ],
+      [
+       20,
+       192
+      ],
+      [
+       20,
+       224
+      ],
+      [
+       7,
+       224
+      ],
+      [
+       7,
+       262
+      ],
+      [
+       18,
+       262
+      ],
+      [
+       18,
+       276
+      ],
+      [
+       67,
+       276
+      ],
+      [
+       67,
+       234
+      ],
+      [
+       126,
+       234
+      ],
+      [
+       126,
+       212
+      ],
+      [
+       84,
+       212
+      ],
+      [
+       84,
+       126
+      ],
+      [
+       52,
+       126
+      ],
+      [
+       52,
+       98
+      ]
+     ]
+    },
+    {
+     "id": "f1-r2",
+     "name": "Lavadero",
+     "color": "room-azure",
+     "poly": [
+      [
+       -131,
+       -257
+      ],
+      [
+       -131,
+       -204
+      ],
+      [
+       -112,
+       -204
+      ],
+      [
+       -112,
+       -194
+      ],
+      [
+       -104,
+       -194
+      ],
+      [
+       -104,
+       -148
+      ],
+      [
+       -131,
+       -148
+      ],
+      [
+       -131,
+       -136
+      ],
+      [
+       -106,
+       -136
+      ],
+      [
+       -106,
+       -109
+      ],
+      [
+       -77,
+       -109
+      ],
+      [
+       -77,
+       -122
+      ],
+      [
+       -56,
+       -122
+      ],
+      [
+       -56,
+       -257
+      ]
+     ]
+    },
+    {
+     "id": "f1-r3",
+     "name": "Oficina Juan",
+     "color": "room-lilac",
+     "poly": [
+      [
+       25,
+       -276
+      ],
+      [
+       25,
+       -250
+      ],
+      [
+       1,
+       -250
+      ],
+      [
+       1,
+       -216
+      ],
+      [
+       27,
+       -216
+      ],
+      [
+       27,
+       -197
+      ],
+      [
+       14,
+       -197
+      ],
+      [
+       14,
+       -172
+      ],
+      [
+       97,
+       -172
+      ],
+      [
+       97,
+       -276
+      ]
+     ]
+    },
+    {
+     "id": "f1-r4",
+     "name": "Cocina",
+     "color": "room-yellow",
+     "poly": [
+      [
+       -103,
+       -103
+      ],
+      [
+       -103,
+       -6
+      ],
+      [
+       -6,
+       -6
+      ],
+      [
+       -6,
+       -66
+      ],
+      [
+       -69,
+       -66
+      ],
+      [
+       -69,
+       -103
+      ]
+     ]
+    },
+    {
+     "id": "f1-r5",
+     "name": "Entrada",
+     "color": "room-sage",
+     "poly": [
+      [
+       -47,
+       12
+      ],
+      [
+       -47,
+       94
+      ],
+      [
+       50,
+       94
+      ],
+      [
+       50,
+       80
+      ],
+      [
+       38,
+       80
+      ],
+      [
+       38,
+       12
+      ],
+      [
+       6,
+       12
+      ],
+      [
+       6,
+       24
+      ],
+      [
+       -8,
+       24
+      ],
+      [
+       -8,
+       12
+      ]
+     ]
+    },
+    {
+     "id": "f1-r6",
+     "name": "Baño gato",
+     "color": "room-mint",
+     "poly": [
+      [
+       -53,
+       -256
+      ],
+      [
+       -53,
+       -161
+      ],
+      [
+       -11,
+       -161
+      ],
+      [
+       -11,
+       -211
+      ],
+      [
+       -26,
+       -211
+      ],
+      [
+       -26,
+       -234
+      ],
+      [
+       -10,
+       -234
+      ],
+      [
+       -10,
+       -256
+      ]
+     ]
+    },
+    {
+     "id": "f1-r7",
+     "name": "Caminadora",
+     "color": "room-blue",
+     "poly": [
+      [
+       -52,
+       -156
+      ],
+      [
+       -52,
+       -111
+      ],
+      [
+       3,
+       -111
+      ],
+      [
+       3,
+       -156
+      ]
+     ]
+    },
+    {
+     "id": "f1-r8",
+     "name": "Baño",
+     "color": "room-teal",
+     "poly": [
+      [
+       -109,
+       32
+      ],
+      [
+       -109,
+       55
+      ],
+      [
+       -86,
+       55
+      ],
+      [
+       -86,
+       68
+      ],
+      [
+       -72,
+       68
+      ],
+      [
+       -72,
+       76
+      ],
+      [
+       -59,
+       76
+      ],
+      [
+       -59,
+       40
+      ],
+      [
+       -79,
+       40
+      ],
+      [
+       -79,
+       32
+      ]
+     ]
+    }
+   ]
+  },
+  "2": {
+   "label": "2F",
+   "name": "Planta 2",
+   "rooms": [
+    {
+     "id": "f2-r0",
+     "name": "Hab. Isa",
+     "color": "room-pink",
+     "poly": [
+      [
+       -28,
+       27
+      ],
+      [
+       -92,
+       27
+      ],
+      [
+       -92,
+       46
+      ],
+      [
+       -134,
+       46
+      ],
+      [
+       -134,
+       156
+      ],
+      [
+       -114,
+       156
+      ],
+      [
+       -114,
+       172
+      ],
+      [
+       -133,
+       172
+      ],
+      [
+       -133,
+       267
+      ],
+      [
+       -64,
+       267
+      ],
+      [
+       -64,
+       172
+      ],
+      [
+       -20,
+       172
+      ],
+      [
+       -20,
+       200
+      ],
+      [
+       -6,
+       200
+      ],
+      [
+       -6,
+       166
+      ],
+      [
+       -28,
+       166
+      ]
+     ]
+    },
+    {
+     "id": "f2-r1",
+     "name": "Hab. Juan",
+     "color": "room-blue",
+     "poly": [
+      [
+       -133,
+       -265
+      ],
+      [
+       -133,
+       -109
+      ],
+      [
+       -48,
+       -109
+      ],
+      [
+       -48,
+       -72
+      ],
+      [
+       -10,
+       -72
+      ],
+      [
+       -10,
+       -262
+      ],
+      [
+       -56,
+       -262
+      ],
+      [
+       -56,
+       -242
+      ],
+      [
+       -82,
+       -242
+      ],
+      [
+       -82,
+       -265
+      ]
+     ]
+    },
+    {
+     "id": "f2-r2",
+     "name": "Hab. papás",
+     "color": "room-teal",
+     "poly": [
+      [
+       6,
+       -225
+      ],
+      [
+       6,
+       -210
+      ],
+      [
+       20,
+       -210
+      ],
+      [
+       20,
+       -186
+      ],
+      [
+       8,
+       -186
+      ],
+      [
+       8,
+       -78
+      ],
+      [
+       130,
+       -78
+      ],
+      [
+       130,
+       -100
+      ],
+      [
+       110,
+       -100
+      ],
+      [
+       110,
+       -122
+      ],
+      [
+       125,
+       -122
+      ],
+      [
+       125,
+       -186
+      ],
+      [
+       110,
+       -186
+      ],
+      [
+       110,
+       -208
+      ],
+      [
+       128,
+       -208
+      ],
+      [
+       128,
+       -225
+      ]
+     ]
+    },
+    {
+     "id": "f2-r3",
+     "name": "Pasillo",
+     "color": "room-sage",
+     "poly": [
+      [
+       48,
+       -71
+      ],
+      [
+       5,
+       -71
+      ],
+      [
+       5,
+       -65
+      ],
+      [
+       -134,
+       -65
+      ],
+      [
+       -134,
+       14
+      ],
+      [
+       -60,
+       14
+      ],
+      [
+       -60,
+       23
+      ],
+      [
+       -28,
+       23
+      ],
+      [
+       -28,
+       14
+      ],
+      [
+       14,
+       14
+      ],
+      [
+       14,
+       21
+      ],
+      [
+       48,
+       21
+      ]
+     ]
+    },
+    {
+     "id": "f2-r4",
+     "name": "Hab. visitas",
+     "color": "room-lilac",
+     "poly": [
+      [
+       19,
+       29
+      ],
+      [
+       19,
+       153
+      ],
+      [
+       68,
+       153
+      ],
+      [
+       68,
+       129
+      ],
+      [
+       134,
+       129
+      ],
+      [
+       134,
+       29
+      ]
+     ]
+    },
+    {
+     "id": "f2-r5",
+     "name": "Baño",
+     "color": "room-mint",
+     "poly": [
+      [
+       62,
+       -38
+      ],
+      [
+       62,
+       14
+      ],
+      [
+       110,
+       14
+      ],
+      [
+       110,
+       -6
+      ],
+      [
+       88,
+       -6
+      ],
+      [
+       88,
+       -38
+      ]
+     ]
+    }
+   ]
+  }
+ },
+ "openings": [
+  {
+   "floor": 1,
+   "room": 5,
+   "kind": "front",
+   "exterior": "W"
+  },
+  {
+   "floor": 1,
+   "room": 8,
+   "kind": "door",
+   "to": 5
+  },
+  {
+   "floor": 1,
+   "room": 4,
+   "kind": "door",
+   "to": 0
+  },
+  {
+   "floor": 1,
+   "room": 2,
+   "kind": "door",
+   "to": 4
+  },
+  {
+   "floor": 1,
+   "room": 7,
+   "kind": "door",
+   "to": 0
+  },
+  {
+   "floor": 1,
+   "room": 3,
+   "kind": "door",
+   "to": 0
+  },
+  {
+   "floor": 1,
+   "room": 6,
+   "kind": "door",
+   "to": 2
+  },
+  {
+   "floor": 1,
+   "room": 1,
+   "kind": "window",
+   "exterior": "S"
+  },
+  {
+   "floor": 1,
+   "room": 2,
+   "kind": "window",
+   "exterior": "E"
+  },
+  {
+   "floor": 2,
+   "room": 3,
+   "kind": "door",
+   "to": 0
+  },
+  {
+   "floor": 2,
+   "room": 3,
+   "kind": "door",
+   "to": 1
+  },
+  {
+   "floor": 2,
+   "room": 3,
+   "kind": "door",
+   "to": 2
+  },
+  {
+   "floor": 2,
+   "room": 3,
+   "kind": "door",
+   "to": 4
+  },
+  {
+   "floor": 2,
+   "room": 3,
+   "kind": "door",
+   "to": 5
+  },
+  {
+   "floor": 2,
+   "room": 0,
+   "kind": "window",
+   "exterior": null
+  },
+  {
+   "floor": 2,
+   "room": 1,
+   "kind": "window",
+   "exterior": null
+  },
+  {
+   "floor": 2,
+   "room": 2,
+   "kind": "window",
+   "exterior": null
+  },
+  {
+   "floor": 2,
+   "room": 4,
+   "kind": "window",
+   "exterior": null
+  }
+ ],
+ "fixtures": [
+  {
+   "type": "stairs",
+   "floor": 1,
+   "room": 5,
+   "steps": 12,
+   "run": 0.22,
+   "width": 0.9,
+   "rise": 0.2,
+   "x": -1.2,
+   "y": 0.55
+  }
+ ],
+ "devices": [
+  {
+   "id": "bartolo",
+   "name": "Bartolo",
+   "match": "bartolo",
+   "domains": [
+    "vacuum"
+   ],
+   "type": "robot",
+   "kind": "Aspiradora robot · Tuya",
+   "floor": 1,
+   "room": 0,
+   "role": "energy"
+  },
+  {
+   "id": "luzbano",
+   "name": null,
+   "match": "luz ba[ñn]o",
+   "domains": [
+    "light",
+    "switch"
+   ],
+   "type": "light",
+   "kind": "Bombillo · Tuya",
+   "floor": 1,
+   "room": 8,
+   "role": "light"
+  },
+  {
+   "id": "puerta",
+   "name": null,
+   "match": "puerta balc[oó]n",
+   "domains": [
+    "binary_sensor"
+   ],
+   "type": "sensor",
+   "kind": "Sensor · Tuya",
+   "floor": 1,
+   "room": 1,
+   "role": "security"
+  },
+  {
+   "id": "carga",
+   "name": null,
+   "match": "estaci[oó]n de carga",
+   "domains": [
+    "switch",
+    "light"
+   ],
+   "type": "switch",
+   "kind": "Enchufe · SmartThings",
+   "floor": 1,
+   "room": 1,
+   "role": "energy"
+  },
+  {
+   "id": "ws1",
+   "name": null,
+   "match": "work\\s?station\\s?1",
+   "domains": [
+    "switch"
+   ],
+   "type": "pc",
+   "kind": "Enchufe · SmartThings",
+   "floor": 1,
+   "room": 3,
+   "role": "energy"
+  },
+  {
+   "id": "ws2",
+   "name": null,
+   "match": "work\\s?station\\s?2",
+   "domains": [
+    "switch"
+   ],
+   "type": "pc",
+   "kind": "Enchufe · SmartThings",
+   "floor": 1,
+   "room": 3,
+   "role": "energy"
+  },
+  {
+   "id": "vent",
+   "name": null,
+   "match": "ventilador",
+   "domains": [
+    "switch",
+    "fan"
+   ],
+   "type": "fan",
+   "kind": "Enchufe · SmartThings",
+   "floor": 1,
+   "room": 3,
+   "role": "energy"
+  }
+ ],
+ "scenes": [
+  {
+   "id": "on",
+   "label": "Encender estación",
+   "match": "Energ[ií]a PC.*ON",
+   "domains": [
+    "scene",
+    "script",
+    "button"
+   ],
+   "icon": "M13 2L4 14h7l-1 8 9-12h-7z",
+   "color": "state-light"
+  },
+  {
+   "id": "off",
+   "label": "Apagar estación",
+   "match": "Energ[ií]a PC.*OFF",
+   "domains": [
+    "scene",
+    "script",
+    "button"
+   ],
+   "icon": "M12 3v9M6.5 6.5a8 8 0 1 0 11 0",
+   "color": "state-energy",
+   "confirm": "Esto apaga las pantallas y, en 1 minuto, la torre. ¿Cerraste Windows?"
+  }
+ ]
+};
 
-    const ROOMS = {"1":[{"p":[[7,-161],[7,9],[42,9],[42,23],[124,23],[124,-100],[110,-100],[110,-134],[122,-134],[122,-161]],"c":[247,121,127]},{"p":[[8,98],[8,192],[20,192],[20,224],[7,224],[7,262],[18,262],[18,276],[67,276],[67,234],[126,234],[126,212],[84,212],[84,126],[52,126],[52,98]],"c":[71,246,200]},{"p":[[-131,-257],[-131,-204],[-112,-204],[-112,-194],[-104,-194],[-104,-148],[-131,-148],[-131,-136],[-106,-136],[-106,-109],[-77,-109],[-77,-122],[-56,-122],[-56,-257]],"c":[249,204,42]},{"p":[[25,-276],[25,-250],[1,-250],[1,-216],[27,-216],[27,-197],[14,-197],[14,-172],[97,-172],[97,-276]],"c":[33,138,250]},{"p":[[-103,-103],[-103,-6],[-6,-6],[-6,-66],[-69,-66],[-69,-103]],"c":[71,165,141]},{"p":[[-47,12],[-47,94],[50,94],[50,80],[38,80],[38,12],[6,12],[6,24],[-8,24],[-8,12]],"c":[124,244,252]},{"p":[[-53,-256],[-53,-161],[-11,-161],[-11,-211],[-26,-211],[-26,-234],[-10,-234],[-10,-256]],"c":[240,157,162]},{"p":[[-52,-156],[-52,-111],[3,-111],[3,-156]],"c":[242,93,95]},{"p":[[-109,32],[-109,55],[-86,55],[-86,68],[-72,68],[-72,76],[-59,76],[-59,40],[-79,40],[-79,32]],"c":[166,228,112]}],"2":[{"p":[[-28,27],[-92,27],[-92,46],[-134,46],[-134,156],[-114,156],[-114,172],[-133,172],[-133,267],[-64,267],[-64,172],[-20,172],[-20,200],[-6,200],[-6,166],[-28,166]],"c":[249,204,42]},{"p":[[-133,-265],[-133,-109],[-48,-109],[-48,-72],[-10,-72],[-10,-262],[-56,-262],[-56,-242],[-82,-242],[-82,-265]],"c":[33,138,250]},{"p":[[6,-225],[6,-210],[20,-210],[20,-186],[8,-186],[8,-78],[130,-78],[130,-100],[110,-100],[110,-122],[125,-122],[125,-186],[110,-186],[110,-208],[128,-208],[128,-225]],"c":[246,120,127]},{"p":[[48,-71],[5,-71],[5,-65],[-134,-65],[-134,14],[-60,14],[-60,23],[-28,23],[-28,14],[14,14],[14,21],[48,21]],"c":[71,165,141]},{"p":[[19,29],[19,153],[68,153],[68,129],[134,129],[134,29]],"c":[166,229,112]},{"p":[[62,-38],[62,14],[110,14],[110,-6],[88,-6],[88,-38]],"c":[71,246,200]}]};
-    const ZN = { 1: ['Comedor', 'Sala', 'Lavadero', 'Oficina Juan', 'Cocina', 'Entrada', 'Baño gato', 'Caminadora', 'Baño'], 2: ['Hab. Isa', 'Hab. Juan', 'Hab. papás', 'Pasillo', 'Hab. visitas', 'Baño'] };
-    const PXM = 43, H = 103, Z2 = 112, VW = 600, VH = 460;
+    const ROOMS = {}; const ZN = {};
+    Object.keys(PLAN.floors).forEach((n) => { ROOMS[n] = PLAN.floors[n].rooms.map((r) => ({ p: r.poly, k: r.color })); ZN[n] = PLAN.floors[n].rooms.map((r) => r.name); });
+    const PXM = PLAN.scale.pxPerMeter, H = PLAN.scale.floorHeight, Z2 = PLAN.scale.floorGap, VW = 600, VH = 460;
     const FURN = [];
-    for (let i = 0; i < 12; i++) FURN.push({ f: 1, r: 5, n: 'Escalera', w: 0.22, d: 0.9, h: 0.2 * (i + 1), dx: -1.2 + 0.22 * i + 0.11, dy: 0.55, c: [214, 200, 186], stair: true });
-    const OPENS = [
-      { f: 1, a: 5, ext: 'W', k: 'front' },
-      { f: 1, a: 8, b: 5, k: 'door' }, { f: 1, a: 4, b: 0, k: 'door' }, { f: 1, a: 2, b: 4, k: 'door' },
-      { f: 1, a: 7, b: 0, k: 'door' }, { f: 1, a: 3, b: 0, k: 'door' }, { f: 1, a: 6, b: 2, k: 'door' },
-      { f: 1, a: 1, ext: 'S', k: 'window' }, { f: 1, a: 2, ext: 'E', k: 'window' },
-      { f: 2, a: 3, b: 0, k: 'door' }, { f: 2, a: 3, b: 1, k: 'door' }, { f: 2, a: 3, b: 2, k: 'door' }, { f: 2, a: 3, b: 4, k: 'door' }, { f: 2, a: 3, b: 5, k: 'door' },
-      { f: 2, a: 0, ext: '', k: 'window' }, { f: 2, a: 1, ext: '', k: 'window' }, { f: 2, a: 2, ext: '', k: 'window' }, { f: 2, a: 4, ext: '', k: 'window' }
-    ];
+    PLAN.fixtures.filter((x) => x.type === 'stairs').forEach((x) => { for (let i = 0; i < x.steps; i++) FURN.push({ f: x.floor, r: x.room, n: 'Escalera', w: x.run, d: x.width, h: x.rise * (i + 1), dx: x.x + x.run * i + x.run / 2, dy: x.y, stair: true }); });
+    const OPENS = PLAN.openings.map((o) => { const q = { f: o.floor, a: o.room, k: o.kind }; if (o.to !== undefined) q.b = o.to; else q.ext = o.exterior || ''; return q; });
+    const hexRgb = (h) => { h = (h || '#888888').trim().replace('#', ''); return [parseInt(h.substr(0, 2), 16), parseInt(h.substr(2, 2), 16), parseInt(h.substr(4, 2), 16)]; };
+    const tok = (n) => hexRgb(getComputedStyle(document.documentElement).getPropertyValue('--' + n));
+    const tokHex = (n) => getComputedStyle(document.documentElement).getPropertyValue('--' + n).trim();
     const ICON = { light: 'M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z', robot: 'M12 4a8 8 0 1 0 0 16 8 8 0 0 0 0-16zM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z', sensor: 'M6 3h9v18H6zM15 6l3 1v13l-3 1M11 12h.01', switch: 'M7 4h10v16H7zM12 8v4', plug: 'M9 3v5M15 3v5M7 8h10v4a5 5 0 0 1-10 0zM12 17v4', oven: 'M4 4h16v16H4zM4 9h16M8 6.5h.01M12 6.5h.01M8 12h8v5H8z', pot: 'M5 10h14v8H5zM3 10h18M9 7h6M12 5v2', camera: 'M4 8h11v8H4zM15 11l5-3v8l-5-3', pc: 'M3 5h18v11H3zM9 20h6M12 16v4', fan: 'M12 12m-1.5 0a1.5 1.5 0 1 0 3 0 1.5 1.5 0 1 0-3 0M12 10.5C12 6 9 4 7 5s-1 4 3 5.5M13.5 12c4.5 0 6.5 3 5.500 5s-4 1-5.500-3M12 13.5C12 18 15 20 17 19s1-4-3-5.500' };
 
     // ---------- geometría
@@ -217,12 +1267,22 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
       const hl = o.hl || [];
       const addFloor = (n, mode) => {
         const z0 = top ? 0 : (n - floor) * Z2; const rs = ROOMS[n]; const act = mode === 'active';
+        if (act && !top) rs.forEach((r, ri) => {
+          if (o.only !== undefined && o.only !== null && ri !== o.only) return;
+          let ar = 0; for (let i = 0; i < r.p.length; i++) { const p = r.p[i], q = r.p[(i + 1) % r.p.length]; ar += p[0] * q[1] - q[0] * p[1]; } const sg = ar >= 0 ? 1 : -1;
+          for (let i = 0; i < r.p.length; i++) {
+            const p = r.p[i], q = r.p[(i + 1) % r.p.length]; const dx = q[0] - p[0], dy = q[1] - p[1]; if (dx * dx + dy * dy < 36) continue;
+            if (((dy * sg) * sn + (-dx * sg) * ct) <= 0) continue;
+            const sl = PLAN.walls.slabDepth; const dimS = o.focus !== undefined && o.focus !== null && o.focus !== ri ? 0.28 : 1;
+            faces.push({ t: '', style: boxStyle([P(p[0], p[1], z0), P(q[0], q[1], z0), P(q[0], q[1], z0 - sl), P(p[0], p[1], z0 - sl)], 'background:' + rgba(tok(PLAN.walls.slabColor), dimS) + ';pointer-events:none;'), go: noop });
+          }
+        });
         rs.forEach((r, i) => {
           if (act && o.only !== undefined && o.only !== null && i !== o.only) return;
           const live = act && !!o.click; const on = hl.indexOf(i) >= 0;
           const pts = r.p.map((p) => P(p[0], p[1], z0));
-          let pcol = r.c.map((v) => Math.round(v + (255 - v) * 0.5)); if (act && o.glow && o.glow.indexOf(i) >= 0) pcol = [255, 224, 138]; if (act && on) pcol = r.c.map((v) => Math.round(v + (255 - v) * 0.2));
-          faces.push({ t: '', style: boxStyle(pts, 'background:linear-gradient(180deg,' + rgba(pcol, act ? 1 : 0.22) + ',' + rgba(pcol, act ? 0.88 : 0.08) + ');transition:background .5s;pointer-events:' + (live ? 'auto' : 'none') + ';cursor:' + (live ? 'pointer' : 'default') + ';'), go: live ? (e) => o.click(i, e) : noop });
+          const base = tok(r.k); let pcol = base; if (act && o.glow && o.glow.indexOf(i) >= 0) { const L = tok('state-light'); pcol = base.map((v, k) => Math.round(v * 0.65 + L[k] * 0.35)); } if (act && on) pcol = base.map((v) => Math.round(v + (255 - v) * 0.08)); const dimF = act && o.focus !== undefined && o.focus !== null && o.focus !== i ? 0.28 : 1;
+          faces.push({ t: '', style: boxStyle(pts, 'background:' + rgba(pcol, (act ? 1 : 0.2) * dimF) + ';transition:background .4s;pointer-events:' + (live ? 'auto' : 'none') + ';cursor:' + (live ? 'pointer' : 'default') + ';'), go: live ? (e) => o.click(i, e) : noop });
         });
         if (!act) return;
         rs.forEach((r, ri) => {
@@ -230,7 +1290,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
           const on = hl.indexOf(ri) >= 0;
           for (let i = 0; i < r.p.length; i++) {
             const a = P(r.p[i][0], r.p[i][1], z0), b = P(r.p[(i + 1) % r.p.length][0], r.p[(i + 1) % r.p.length][1], z0);
-            faces.push({ t: '', style: lineStyle(a, b, on ? 'var(--text)' : 'rgba(255,255,255,0.98)', top ? (on ? 5 : 5.5) : 3), go: noop });
+            faces.push({ t: '', style: lineStyle(a, b, on ? '#FFFFFF' : tokHex(PLAN.walls.topColor), top ? (on ? 5 : 5.5) : 3), go: noop });
           }
         });
         const walls = []; const ops = OPS[n];
@@ -243,7 +1303,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
             const p = r.p[i], q = r.p[(i + 1) % r.p.length]; const dx = q[0] - p[0], dy = q[1] - p[1];
             if (dx * dx + dy * dy < 36) continue;
             const nx = dy * sg, ny = -dx * sg; const facing = (nx * sn + ny * ct) > 0;
-            walls.push({ op: ops[ri + ':' + i], p: p, q: q, h: (facing ? H * 0.07 : H * 0.15) * ((o.only !== undefined && o.only !== null) ? 0.9 : 1), facing: facing, d: dep((p[0] + q[0]) / 2, (p[1] + q[1]) / 2) });
+            walls.push({ op: ops[ri + ':' + i], p: p, q: q, h: (facing ? H * PLAN.walls.heightFront : H * PLAN.walls.heightBack) * ((o.only !== undefined && o.only !== null) ? 0.9 : 1), facing: facing, d: dep((p[0] + q[0]) / 2, (p[1] + q[1]) / 2) });
           }
         });
         if (o.furn !== false) FURN.filter((q) => q.f === n && (o.only === undefined || o.only === null || q.r === o.only)).forEach((q) => {
@@ -252,16 +1312,15 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
         walls.sort((a, b) => a.d - b.d);
         walls.forEach((w) => {
           if (w.box) {
-            const q = w.box, hw = q.w * PXM / 2, hd = q.d * PXM / 2, bh = q.h * PXM;
+            const q = w.box; const fc = tok(ROOMS[n][q.r].k); const bc = q.cat ? q.c : fc.map((v) => Math.round(v * 0.82)); const bs2 = bc.map((v) => Math.round(v * 0.86)); const hw = q.w * PXM / 2, hd = q.d * PXM / 2, bh = q.h * PXM;
             const cr = [[-hw, -hd], [hw, -hd], [hw, hd], [-hw, hd]]; const sides = [[0, 1, 0, -1], [1, 2, 1, 0], [2, 3, 0, 1], [3, 0, -1, 0]];
             if (!top) sides.forEach((sd) => {
               if ((sd[2] * sn + sd[3] * ct) <= 0) return; const a = cr[sd[0]], b = cr[sd[1]];
               const p0 = P(w.cx + a[0], w.cy + a[1], z0), p1 = P(w.cx + b[0], w.cy + b[1], z0), p2 = P(w.cx + b[0], w.cy + b[1], z0 + bh), p3 = P(w.cx + a[0], w.cy + a[1], z0 + bh);
-              faces.push({ t: '', style: boxStyle([p0, p1, p2, p3], 'background:linear-gradient(180deg,' + rgba(q.c, 0.78) + ',' + rgba(q.c, 0.5) + ');pointer-events:none;'), go: noop });
+              faces.push({ t: '', style: boxStyle([p0, p1, p2, p3], 'background:' + rgba(bs2, 1) + ';pointer-events:none;'), go: noop });
             });
             const tp = cr.map((k) => P(w.cx + k[0], w.cy + k[1], z0 + bh));
-            faces.push({ t: '', style: boxStyle(tp, 'background:linear-gradient(160deg,rgba(255,255,255,0.55),' + rgba(q.c, 0.72) + ');pointer-events:none;'), go: noop });
-            for (let i = 0; i < 4; i++) faces.push({ t: '', style: lineStyle(tp[i], tp[(i + 1) % 4], 'rgba(255,255,255,0.85)', 1.2), go: noop });
+            faces.push({ t: '', style: boxStyle(tp, 'background:' + rgba(bc, 1) + ';pointer-events:none;'), go: noop });
             return;
           }
           const L = Math.hypot(w.q[0] - w.p[0], w.q[1] - w.p[1]); const X = (t) => [w.p[0] + (w.q[0] - w.p[0]) * t, w.p[1] + (w.q[1] - w.p[1]) * t];
@@ -270,20 +1329,18 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
               faces.push({ t: '', style: lineStyle(P(A[0], A[1], 0), P(B[0], B[1], 0), w.op.k === 'window' ? 'rgba(120,190,255,0.95)' : (w.op.k === 'front' ? 'rgba(30,28,36,0.9)' : 'rgba(176,98,52,0.95)'), 5), go: noop }); }
             return;
           }
-          const gW = w.facing ? 'linear-gradient(180deg,rgba(255,255,255,0.7),rgba(255,255,255,0.93))' : 'linear-gradient(180deg,rgba(255,255,255,0.88),rgba(255,255,255,0.97))';
+          const gW = tokHex(PLAN.walls.sideColor);
           const seg = (ta, tb, zl, zh, bg) => { const A = X(ta), B = X(tb); faces.push({ t: '', style: boxStyle([P(A[0], A[1], z0 + zl), P(B[0], B[1], z0 + zl), P(B[0], B[1], z0 + zh), P(A[0], A[1], z0 + zh)], 'background:' + bg + ';pointer-events:none;'), go: noop }); };
           if (w.op && !w.facing) {
             const ow = (w.op.k === 'window' ? Math.min(1.4 * PXM, L * 0.7) : 0.85 * PXM) / L; const t0 = w.op.t - ow / 2, t1 = w.op.t + ow / 2; const dh = 2.0 * PXM, sill = 0.9 * PXM;
             seg(0, t0, 0, w.h, gW); seg(t1, 1, 0, w.h, gW);
-            if (w.op.k === 'window') { seg(t0, t1, 0, sill, gW); seg(t0, t1, dh, w.h, gW); seg(t0, t1, sill, dh, 'linear-gradient(160deg,rgba(150,205,255,0.55),rgba(255,255,255,0.18))'); }
-            else { seg(t0, t1, dh, w.h, gW); seg(t0, t1, 0, dh, w.op.k === 'front' ? 'linear-gradient(180deg,rgba(30,28,36,0.62),rgba(30,28,36,0.4))' : 'linear-gradient(180deg,rgba(176,98,52,0.55),rgba(176,98,52,0.32))'); }
+            /* hueco limpio: sin hoja de puerta ni vidrio (maqueta) */
             const T0 = X(t0), T1 = X(t1);
-            faces.push({ t: '', style: lineStyle(P(T0[0], T0[1], z0 + dh), P(T1[0], T1[1], z0 + dh), 'rgba(255,255,255,0.9)', 1.5), go: noop });
-            faces.push({ t: '', style: lineStyle(P(w.p[0], w.p[1], z0 + w.h), P(w.q[0], w.q[1], z0 + w.h), 'rgba(255,255,255,0.8)', 1.5), go: noop });
+                        faces.push({ t: '', style: lineStyle(P(w.p[0], w.p[1], z0 + w.h), P(w.q[0], w.q[1], z0 + w.h), tokHex(PLAN.walls.topColor), 2.5), go: noop });
             return;
           }
           seg(0, 1, 0, w.h, gW);
-          faces.push({ t: '', style: lineStyle(P(w.p[0], w.p[1], z0 + w.h), P(w.q[0], w.q[1], z0 + w.h), 'rgba(255,255,255,0.8)', 1.5), go: noop });
+          faces.push({ t: '', style: lineStyle(P(w.p[0], w.p[1], z0 + w.h), P(w.q[0], w.q[1], z0 + w.h), tokHex(PLAN.walls.topColor), 2.5), go: noop });
         });
       };
       if (o.ghost !== false && !top && (o.only === undefined || o.only === null) && floor === 2) addFloor(1, 'ghost');
@@ -291,7 +1348,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
       if (o.labels) ROOMS[floor].forEach((r, i) => {
         if (o.only !== undefined && o.only !== null && i !== o.only) return;
         const c = centroid(r.p); const pt = P(c[0], c[1] + (top ? 0 : 46), 6);
-        faces.push({ t: ZN[floor][i], go: noop, style: 'position:absolute;left:' + pc(pt[0], VW) + ';top:' + pc(pt[1], VHs) + ';transform:translate(-50%,-50%);font-size:9px;font-weight:600;line-height:1;white-space:nowrap;color:var(--tile-text);padding:3px 8px;border-radius:999px;background:rgba(255,255,255,0.72);border:1px solid rgba(255,255,255,0.9);pointer-events:none;' });
+        faces.push({ t: ZN[floor][i], go: noop, style: 'position:absolute;left:' + pc(pt[0], VW) + ';top:' + pc(pt[1], VHs) + ';transform:translate(-50%,-50%);font-size:11px;font-weight:500;line-height:14px;white-space:nowrap;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,0.5);pointer-events:none;' });
       });
       if (o.ghost !== false && !top && (o.only === undefined || o.only === null) && floor === 1) addFloor(2, 'ghost');
       // dispositivos
@@ -301,15 +1358,8 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
         const room = ROOMS[d.f][d.r % ROOMS[d.f].length]; const c = centroid(room.p); const key = d.f + ':' + d.r; const k = slots[key] || 0; slots[key] = k + 1;
         const off = [[0, 0], [64, 0], [-64, 0], [0, 64], [0, -64], [64, 64]][k % 6];
         const pt = (d.x !== undefined && d.x !== null) ? P(d.x, d.y, top ? 0 : 36) : P(c[0] + off[0], c[1] + off[1], top ? 0 : 36);
-        const act = d.live || d.on;
-        pucks.push({
-          aria: d.name + ', ' + d.stateText, pressed: d.on ? 'true' : 'false', path: ICON[d.type],
-          style: 'position:absolute;left:' + pc(pt[0], VW) + ';top:' + pc(pt[1], VHs) + ';width:var(--puck);height:var(--puck);padding:0;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transform:translate(-50%,-50%);transition:left .6s cubic-bezier(.2,.8,.2,1),top .6s cubic-bezier(.2,.8,.2,1),box-shadow .4s,background .4s;'
-            + 'background:rgba(255,255,255,0.97);color:' + (act ? (d.glow || '#E8A317') : '#4a4756') + ';'
-            + 'border:' + (o.selId === d.id ? '2.5px solid #E8663C' : '1.5px solid rgba(255,255,255,1)') + ';'
-            + 'box-shadow:' + (act ? '0 0 14px rgba(255,200,80,0.75),0 3px 8px rgba(0,0,0,0.18)' : '0 3px 8px rgba(0,0,0,0.2)') + ';pointer-events:' + (o.dim ? 'none' : 'auto') + ';opacity:' + (o.dim ? 0.3 : 1) + ';',
-          go: () => o.onDev(d.id)
-        });
+        const act = !!(d.live || d.on) && !d.un; const dimP = (o.focus !== undefined && o.focus !== null && o.focus !== d.r) || o.dim;
+        pucks.push({ aria: d.name + ', ' + d.stateText, path: ICON[d.type], x: pc(pt[0], VW), y: pc(pt[1], VHs), act: act, un: !!d.un, color: act ? tokHex('state-' + (d.role || 'energy')) : tokHex('state-off'), sel: o.selId === d.id, dim: !!dimP, go: () => o.onDev(d.id) });
       });
       let lio = { show: false, style: '' };
       if (o.lio && floor === 1 && (o.only === undefined || o.only === null || o.only === 1)) {
@@ -418,22 +1468,15 @@ function initHid(){if(!S.dataLoaded||!S.cals.length||S.D.hidInit)return;S.cals.f
 function todoEnt(){var t=find(/lista de la compra|shopping/i,['todo'])[0];return t&&t.entity_id}
 function loadTodo(){var e=todoEnt();if(!e||!S.ready)return;send({type:'todo/item/list',entity_id:e},function(r){S.todo=(r.result&&r.result.items)||[];softRender()})}
 // ---------- Dispositivos
-var DEVSPEC=[
- {id:'bartolo',re:/bartolo/i,dom:['vacuum'],type:'robot',ic:'robot',kind:'Aspiradora robot · Tuya',f:1,r:0},
- {id:'luzbano',re:/luz ba[ñn]o/i,dom:['light','switch'],type:'light',ic:'bulb',kind:'Bombillo · Tuya',f:1,r:8},
- {id:'puerta',re:/puerta balc[oó]n/i,dom:['binary_sensor'],type:'sensor',ic:'door',kind:'Sensor · Tuya',f:1,r:1},
- {id:'carga',re:/estaci[oó]n de carga/i,dom:['switch','light'],type:'switch',ic:'plug',kind:'Enchufe · SmartThings',f:1,r:1},
- {id:'ws1',re:/work\s?station\s?1/i,dom:['switch'],type:'pc',ic:'pc',kind:'Enchufe · SmartThings',f:1,r:3},
- {id:'ws2',re:/work\s?station\s?2/i,dom:['switch'],type:'pc',ic:'pc',kind:'Enchufe · SmartThings',f:1,r:3},
- {id:'vent',re:/ventilador/i,dom:['switch','fan'],type:'fan',ic:'fan',kind:'Enchufe · SmartThings',f:1,r:3}];
+var ICM={robot:'robot',light:'bulb',sensor:'door',switch:'plug',pc:'pc',fan:'fan',camera:'door'};
 function mapDevs(){
   var out=[];
-  DEVSPEC.forEach(function(sp){
-    var e=find(sp.re,sp.dom)[0];if(!e)return;
+  PLAN.devices.forEach(function(sp){
+    var e=find(new RegExp(sp.match,'i'),sp.domains)[0];if(!e)return;
     var ov=S.D.map&&S.D.map[sp.id],un=e.state==='unavailable';
     var on=!un&&(e.state==='on'||e.state==='cleaning');
     var tx=un?'No disponible':sp.type==='sensor'?(e.state==='on'?'Abierta':'Cerrada'):sp.type==='robot'?(({cleaning:'Limpiando',docked:'En la base',returning:'Volviendo',paused:'En pausa',idle:'Inactivo'})[e.state]||e.state):(on?'On':'Off');
-    out.push({id:sp.id,name:sp.id==='bartolo'?'Bartolo':nm(e),type:sp.type,ic:sp.ic,kind:sp.kind,f:ov?ov.f:sp.f,r:ov?ov.r:sp.r,on:on,live:on,stateText:tx,ent:e.entity_id,un:un});
+    out.push({id:sp.id,name:sp.id==='bartolo'?'Bartolo':nm(e),type:sp.type,role:sp.role,ic:ICM[sp.type]||'plug',kind:sp.kind,f:ov?ov.f:sp.floor,r:ov?ov.r:sp.room,on:on,live:on,stateText:tx,ent:e.entity_id,un:un});
   });
   return out;
 }
@@ -453,7 +1496,7 @@ function render(){
     $('#go').onclick=function(){S.base=$('#base').value.replace(/\/$/,'');S.tok=$('#tok').value.trim();localStorage.setItem('vida-base',S.base);localStorage.setItem('vida-token',S.tok);connect()};return}
   var D=[['home','Inicio',IC.home,['home']],['casa','Casa',IC.casa,['casa']],['bartolo','Bartolo',IC.robot,['bartolo']],['menu','Menú',IC.menu,['menu']]];
   $('#nav').innerHTML=D.map(function(d){return '<button data-tab="'+d[0]+'" aria-label="'+d[1]+'" class="'+(d[3].indexOf(S.scr)>=0?'on':'')+'">'+ic(d[2],22)+'<span>'+d[1]+'</span></button>'}).join('');
-  var fn=SCREENS[S.scr]||SCREENS.home;app.innerHTML=fn();bind();
+  document.body.classList.toggle('dh',S.scr==='casa'||S.scr==='bartolo');var fn=SCREENS[S.scr]||SCREENS.home;app.innerHTML=fn();bind();
 }
 function setupHTML(){return card('','<div class="tt">Vida</div><div class="hint">Conecta con tu Home Assistant</div><div class="hint">Dirección del hub</div><input id="base" value="'+esc(S.base)+'"><div class="hint">Token de acceso de larga duración (tu perfil de HA &gt; Seguridad)</div><input id="tok" placeholder="pega el token aquí" autocomplete="off"><button class="btn p f" id="go">Conectar</button>')}
 // ---------- Utilidades de módulos
@@ -513,31 +1556,41 @@ function agendaCard(){
 }
 // ---------- CASA
 function furnLine(){return ''}
+S.ct='mapa';S.rf=null;S.tf=null;
+var ROLES=[['light','Luces','M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z','encendidas'],['energy','Energía','M13 2L4 14h7l-1 8 9-12h-7z','encendidos'],['security','Seguridad','M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z','sensores']];
 SCREENS.casa=function(){
   syncFurn();
-  var top=S.mv==='top',rot=S.mr!=null?S.mr:(top?90:-50),devs=mapDevs();
-  var sc=scene({vh:top?330:460,floor:S.mf,rot:rot,top:top,phi:top?90:33.4,S:1.0,labels:top,devs:devs,selId:S.msel,glow:devs.filter(function(d){return d.type==='light'&&d.on}).map(function(d){return d.r}),lio:false,furn:true,
-    click:function(i){if(S.fe){S.fr=i;S.fsel='';render()}else mapRoom(i)},onDev:function(id){S.msel=S.msel===id?'':id;S.mmove='';render()}});
+  var top=S.mv==='top',rot=S.mr!=null?S.mr:(top?90:-20),all=mapDevs(),devs=all.filter(function(d){return !S.tf||d.role===S.tf});
+  var rooms=PLAN.floors[S.mf].rooms;if(S.rf!=null&&S.rf>=rooms.length)S.rf=null;
+  var sc=scene({vh:top?330:460,floor:S.mf,rot:rot,top:top,phi:top?90:38,S:1.0,labels:true,devs:devs,selId:S.msel,focus:S.rf,glow:all.filter(function(d){return d.type==='light'&&d.on}).map(function(d){return d.r}),lio:false,furn:true,
+    click:function(i){if(S.fe){S.fr=i;S.fsel='';render()}else if(S.mmove)mapRoom(i);else{S.rf=S.rf===i?null:i;render()}},onDev:function(id){S.msel=S.msel===id?'':id;S.mmove='';render()}});
   S._sc=sc;
-  var onN=devs.filter(function(d){return d.on}).length;
-  var h=hdr('Casa','Vista '+(top?'cenital':'3D')+' · Planta '+S.mf+' · '+pl(onN,'encendido','encendidos'));
-  var m='<div class="mapw" style="--puck:26px;aspect-ratio:'+sc.ar+'">';
+  var onN=all.filter(function(d){return d.on}).length;
+  var h=hdr('Casa',onN+' encendidos · '+PLAN.floors[S.mf].name);
+  h+='<div class="tabs">'+[['mapa','Mapa'],['disp','Dispositivos']].map(function(t){return '<button class="'+(S.ct===t[0]?'on':'')+'" data-ct="'+t[0]+'">'+t[1]+'</button>'}).join('')+'</div>';
+  if(S.ct==='disp'){
+    [1,2].forEach(function(n){var fl=all.filter(function(d){return d.f===n});h+=card(PLAN.floors[n].name,fl.length?rows(fl.map(function(d){return row({ic:IC[d.ic],t:esc(d.name),s:esc(PLAN.floors[d.f].rooms[d.r%PLAN.floors[d.f].rooms.length].name+' · '+d.kind),r:'<span class="'+(d.un?'bad-t':d.on?'on-t':'off-t')+'">'+esc(d.stateText)+'</span>',at:'data-dev="'+d.id+'" data-goto="1"'})})):'<div class="empty">Sin dispositivos</div>')});
+    return h;
+  }
+  // barra de escenas
+  var scn=PLAN.scenes.map(function(c){var e=find(new RegExp(c.match,'i'),c.domains)[0];return e?'<button data-sc="'+e.entity_id+'"'+(c.confirm?' data-conf="'+esc(c.confirm)+'"':'')+'><span style="color:var(--'+c.color+')">'+ic(c.icon,18)+'</span>'+esc(c.label)+'</button>':''}).join('');
+  var m='<div class="mapw" style="aspect-ratio:'+sc.ar+'">';
   sc.faces.forEach(function(f,i){m+='<div data-fi="'+i+'" style="'+f.style+'">'+esc(f.t)+'</div>'});
-  sc.pucks.forEach(function(p,i){m+='<button type="button" data-pi="'+i+'" aria-label="'+esc(p.aria)+'" style="'+p.style+'"><svg width="56%" height="56%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="'+p.path+'"/></svg></button>'});
+  sc.pucks.forEach(function(p,i){m+='<button type="button" class="pin'+(p.sel?' sel':'')+(p.dim?' dim':'')+(p.un?' off':'')+'" data-pi="'+i+'" aria-label="'+esc(p.aria)+'" style="left:'+p.x+';top:'+p.y+';--pc:'+p.color+'"><i></i>'+ic(p.path,16)+'</button>'});
   m+='</div>';
-  h+='<div class="card" style="padding:8px;gap:0">'+m+'</div>';
-  h+='<div class="card">'+chips([chip('Planta 1',S.mf===1,'data-mf="1"'),chip('Planta 2',S.mf===2,'data-mf="2"'),chip(top?'3D':'Cenital',false,'data-mv="'+(top?'3d':'top')+'"'),chip('Muebles',S.fe,'data-fe="1"'),'<button class="chip" data-rot="-1">⟲</button>','<button class="chip" data-rot="1">⟳</button>'])+'<span class="hint">'+(S.fe?'Toca una habitación para amueblarla.':'Toca un dispositivo del mapa para controlarlo.')+'</span></div>';
+  var V=function(on,at,lab,p){return '<button class="'+(on?'on':'')+'" '+at+' aria-label="'+lab+'">'+ic(p,18)+'</button>'};
+  var panel='<div class="panel"><div class="views">'+V(!top,'data-mv="3d"','Vista 3D','M12 3l8 4.5v9L12 21l-8-4.5v-9zM12 12l8-4.5M12 12v9M12 12L4 7.5')+V(top,'data-mv="top"','Vista cenital','M4 4h16v16H4zM4 12h16M12 4v16')+V(S.fe,'data-fe="1"','Editar muebles','M4 20h4L19 9l-4-4L4 16zM13 7l4 4')+V(false,'data-rot="1"','Rotar','M20 12a8 8 0 1 1-3-6.2M20 4v5h-5')+'</div>'+
+   '<div class="fld"><select id="sel_f" aria-label="Planta">'+[1,2].map(function(n){return '<option value="'+n+'"'+(S.mf===n?' selected':'')+'>'+PLAN.floors[n].label+'</option>'}).join('')+'</select><select id="sel_r" class="'+(S.rf!=null?'act':'')+'" aria-label="Habitación"><option value="">Todas las habitaciones</option>'+rooms.map(function(r,i){return '<option value="'+i+'"'+(S.rf===i?' selected':'')+'>'+esc(r.name)+'</option>'}).join('')+'</select></div>'+
+   ROLES.map(function(r){var d=all.filter(function(x){return x.role===r[0]}),n=d.filter(function(x){return x.on}).length;return d.length?'<button class="scard'+(S.tf===r[0]?' on':'')+'" data-tf="'+r[0]+'"><i style="color:var(--state-'+r[0]+')">'+ic(r[2],16)+'</i><span><b>'+r[1]+'</b><small>'+(r[0]==='security'?d.length+' '+r[3]:n+' '+r[3])+'</small></span></button>':''}).join('')+
+   '<button class="outl'+(S.fe?' on':'')+'" data-fe="1">Editar mapa</button></div>';
+  h+='<div class="dhg">'+(scn?'<div class="scenes">'+scn+'</div>':'')+'<div class="dhmap">'+m+'</div>'+panel+'</div>';
   if(S.fe)h+=furnEditor();
-  var sd=devs.filter(function(d){return d.id===S.msel})[0];
+  var sd=all.filter(function(d){return d.id===S.msel})[0];
   if(sd&&S.mmove)h+=card('Mover','<div class="n" style="font-size:17px;font-weight:500">Toca la habitación donde está '+esc(sd.name)+'</div><button class="btn f" data-mcancel="1">Cancelar</button>');
   else if(sd){var b='';
     if(sd.type==='robot')b='<button class="btn p" data-vc="start">Iniciar</button><button class="btn" data-vc="return_to_base">A la base</button>';
     else if(sd.type!=='sensor'&&!sd.un)b='<button class="btn p" data-tg="'+sd.ent+'">'+(sd.on?'Apagar':'Encender')+'</button>';
-    h+=card(esc(sd.name),'<div class="hint">'+esc(ZN[sd.f][sd.r%ZN[sd.f].length])+' · '+esc(sd.kind)+' · '+esc(sd.stateText)+'</div>'+chips([b,'<button class="btn" data-mmove="'+sd.id+'">Mover</button>']))}
-  var fl=devs.filter(function(d){return d.f===S.mf});
-  h+=card('Dispositivos · Planta '+S.mf,fl.length?rows(fl.map(function(d){return row({ic:IC[d.ic],t:esc(d.name),s:esc(ZN[d.f][d.r%ZN[d.f].length]+' · '+d.kind),r:'<span class="'+(d.un?'bad-t':d.on?'on-t':'off-t')+'">'+esc(d.stateText)+'</span>',at:'data-dev="'+d.id+'"'})})):'<div class="empty">No hay dispositivos en esta planta</div>');
-  var on=find(/Energ[ií]a PC.*ON/i,['scene','script','button']),off=find(/Energ[ií]a PC.*OFF/i,['scene','script','button']);
-  if(on[0]||off[0])h+=card('Estación de trabajo',chips([on[0]?'<button class="btn p" data-sc="'+on[0].entity_id+'">Encender estación</button>':'',off[0]?'<button class="btn w" data-sc="'+off[0].entity_id+'" data-conf="1">Apagar estación</button>':''])+'<span class="hint">Apagar corta primero las pantallas y la torre tras 1 min. Cierra Windows antes.</span>');
+    h+=card(esc(sd.name),'<div class="hint">'+esc(PLAN.floors[sd.f].rooms[sd.r%PLAN.floors[sd.f].rooms.length].name)+' · '+esc(sd.kind)+' · '+esc(sd.stateText)+'</div>'+chips([b,'<button class="btn" data-mmove="'+sd.id+'">Mover</button>']))}
   return h;
 };
 SCREENS.casa2=SCREENS.casa;
@@ -715,9 +1768,9 @@ function bind(){
   var pv=$('#pv'),nx=$('#nx');if(pv){pv.onclick=function(){S.cm--;render()};nx.onclick=function(){S.cm++;render()}}
   q('[data-cal]',function(b){b.onclick=function(){var k=b.dataset.cal;if(S.D.hid[k])delete S.D.hid[k];else S.D.hid[k]=1;saveD();render()}});
   q('[data-tg]',function(b){b.onclick=function(){var id=b.dataset.tg;call(id.split('.')[0],'toggle',{},{entity_id:id})}});
-  q('[data-sc]',function(b){b.onclick=function(){if(b.dataset.conf&&!confirm('Esto apaga las pantallas y, en 1 minuto, la torre. ¿Cerraste Windows?'))return;var id=b.dataset.sc,d=id.split('.')[0];call(d,d==='button'?'press':'turn_on',{},{entity_id:id})}});
+  q('[data-sc]',function(b){b.onclick=function(){if(b.dataset.conf&&!confirm(b.dataset.conf))return;var id=b.dataset.sc,d=id.split('.')[0];call(d,d==='button'?'press':'turn_on',{},{entity_id:id})}});
   q('[data-vc]',function(b){b.onclick=function(){var v=find(/bartolo/i,['vacuum'])[0];if(v)call('vacuum',b.dataset.vc,{},{entity_id:v.entity_id})}});
-  q('[data-dev]',function(b){b.onclick=function(){S.msel=S.msel===b.dataset.dev?'':b.dataset.dev;S.mmove='';render()}});
+  q('[data-dev]',function(b){b.onclick=function(){if(b.dataset.goto){S.ct='mapa';var dv=mapDevs().filter(function(x){return x.id===b.dataset.dev})[0];if(dv){S.mf=dv.f}S.msel=b.dataset.dev;S.mmove='';render();return}S.msel=S.msel===b.dataset.dev?'':b.dataset.dev;S.mmove='';render()}});
   q('[data-it]',function(b){b.onclick=function(){var it=S.D.items.filter(function(x){return x.id===b.dataset.it})[0];if(it)openModal(JSON.parse(JSON.stringify(it)),it.cat)}});
   q('[data-add]',function(b){b.onclick=function(){openModal(null,b.dataset.add)}});
   var ta=$('#ta');if(ta){var add=function(){var v=$('#ti').value.trim();if(!v)return;call('todo','add_item',{item:v},{entity_id:todoEnt()});$('#ti').value='';setTimeout(loadTodo,400)};ta.onclick=add;$('#ti').onkeydown=function(e){if(e.key==='Enter')add()}}
@@ -726,7 +1779,10 @@ function bind(){
   var pg=$('#pgo');if(pg)pg.onclick=function(){var p=$('#pin').value.trim();if(!/^\d{4,6}$/.test(p)){$('#pin').value='';$('#pin').placeholder='Solo 4 a 6 dígitos';return}
     if(!S.D.pin){S.D.pin=hashPin(p);saveD();S.unlocked=true;render()}else if(hashPin(p)===S.D.pin){S.unlocked=true;render()}else{$('#pin').value='';$('#pin').placeholder='PIN incorrecto'}};
   var pl=$('#plock');if(pl)pl.onclick=function(){S.unlocked=false;render()};
-  q('[data-mf]',function(b){b.onclick=function(){S.mf=parseInt(b.dataset.mf,10);render()}});
+  q('[data-ct]',function(b){b.onclick=function(){S.ct=b.dataset.ct;render()}});
+  q('[data-tf]',function(b){b.onclick=function(){S.tf=S.tf===b.dataset.tf?null:b.dataset.tf;render()}});
+  var sf=$('#sel_f');if(sf)sf.onchange=function(){S.mf=parseInt(sf.value,10);S.rf=null;S.msel='';render()};
+  var sr=$('#sel_r');if(sr)sr.onchange=function(){S.rf=sr.value===''?null:parseInt(sr.value,10);render()};
   q('[data-mv]',function(b){b.onclick=function(){S.mv=b.dataset.mv;S.mr=null;render()}});
   q('[data-rot]',function(b){b.onclick=function(){var top=S.mv==='top',cur=S.mr!=null?S.mr:(top?90:-50);S.mr=cur+parseInt(b.dataset.rot,10)*(top?90:45);render()}});
   q('[data-fi]',function(b){b.onclick=function(e){var f=S._sc&&S._sc.faces[parseInt(b.dataset.fi,10)];if(f&&f.go)f.go(e)}});

@@ -1,0 +1,997 @@
+{
+ "_doc": "Plano de la casa. Unidades: px del plano (43 px = 1 m). Editable: habitaciones (poly), colores (token room-*), aperturas y dispositivos.",
+ "scale": {
+  "pxPerMeter": 43,
+  "floorHeight": 103,
+  "floorGap": 112
+ },
+ "walls": {
+  "heightBack": 0.15,
+  "heightFront": 0.07,
+  "topColor": "wall-top",
+  "sideColor": "wall-side",
+  "slabColor": "plate-base",
+  "slabDepth": 10
+ },
+ "floors": {
+  "1": {
+   "label": "1F",
+   "name": "Planta 1",
+   "rooms": [
+    {
+     "id": "f1-r0",
+     "name": "Comedor",
+     "color": "room-sky",
+     "poly": [
+      [
+       7,
+       -161
+      ],
+      [
+       7,
+       9
+      ],
+      [
+       42,
+       9
+      ],
+      [
+       42,
+       23
+      ],
+      [
+       124,
+       23
+      ],
+      [
+       124,
+       -100
+      ],
+      [
+       110,
+       -100
+      ],
+      [
+       110,
+       -134
+      ],
+      [
+       122,
+       -134
+      ],
+      [
+       122,
+       -161
+      ]
+     ]
+    },
+    {
+     "id": "f1-r1",
+     "name": "Sala",
+     "color": "room-green",
+     "poly": [
+      [
+       8,
+       98
+      ],
+      [
+       8,
+       192
+      ],
+      [
+       20,
+       192
+      ],
+      [
+       20,
+       224
+      ],
+      [
+       7,
+       224
+      ],
+      [
+       7,
+       262
+      ],
+      [
+       18,
+       262
+      ],
+      [
+       18,
+       276
+      ],
+      [
+       67,
+       276
+      ],
+      [
+       67,
+       234
+      ],
+      [
+       126,
+       234
+      ],
+      [
+       126,
+       212
+      ],
+      [
+       84,
+       212
+      ],
+      [
+       84,
+       126
+      ],
+      [
+       52,
+       126
+      ],
+      [
+       52,
+       98
+      ]
+     ]
+    },
+    {
+     "id": "f1-r2",
+     "name": "Lavadero",
+     "color": "room-azure",
+     "poly": [
+      [
+       -131,
+       -257
+      ],
+      [
+       -131,
+       -204
+      ],
+      [
+       -112,
+       -204
+      ],
+      [
+       -112,
+       -194
+      ],
+      [
+       -104,
+       -194
+      ],
+      [
+       -104,
+       -148
+      ],
+      [
+       -131,
+       -148
+      ],
+      [
+       -131,
+       -136
+      ],
+      [
+       -106,
+       -136
+      ],
+      [
+       -106,
+       -109
+      ],
+      [
+       -77,
+       -109
+      ],
+      [
+       -77,
+       -122
+      ],
+      [
+       -56,
+       -122
+      ],
+      [
+       -56,
+       -257
+      ]
+     ]
+    },
+    {
+     "id": "f1-r3",
+     "name": "Oficina Juan",
+     "color": "room-lilac",
+     "poly": [
+      [
+       25,
+       -276
+      ],
+      [
+       25,
+       -250
+      ],
+      [
+       1,
+       -250
+      ],
+      [
+       1,
+       -216
+      ],
+      [
+       27,
+       -216
+      ],
+      [
+       27,
+       -197
+      ],
+      [
+       14,
+       -197
+      ],
+      [
+       14,
+       -172
+      ],
+      [
+       97,
+       -172
+      ],
+      [
+       97,
+       -276
+      ]
+     ]
+    },
+    {
+     "id": "f1-r4",
+     "name": "Cocina",
+     "color": "room-yellow",
+     "poly": [
+      [
+       -103,
+       -103
+      ],
+      [
+       -103,
+       -6
+      ],
+      [
+       -6,
+       -6
+      ],
+      [
+       -6,
+       -66
+      ],
+      [
+       -69,
+       -66
+      ],
+      [
+       -69,
+       -103
+      ]
+     ]
+    },
+    {
+     "id": "f1-r5",
+     "name": "Entrada",
+     "color": "room-sage",
+     "poly": [
+      [
+       -47,
+       12
+      ],
+      [
+       -47,
+       94
+      ],
+      [
+       50,
+       94
+      ],
+      [
+       50,
+       80
+      ],
+      [
+       38,
+       80
+      ],
+      [
+       38,
+       12
+      ],
+      [
+       6,
+       12
+      ],
+      [
+       6,
+       24
+      ],
+      [
+       -8,
+       24
+      ],
+      [
+       -8,
+       12
+      ]
+     ]
+    },
+    {
+     "id": "f1-r6",
+     "name": "Baño gato",
+     "color": "room-mint",
+     "poly": [
+      [
+       -53,
+       -256
+      ],
+      [
+       -53,
+       -161
+      ],
+      [
+       -11,
+       -161
+      ],
+      [
+       -11,
+       -211
+      ],
+      [
+       -26,
+       -211
+      ],
+      [
+       -26,
+       -234
+      ],
+      [
+       -10,
+       -234
+      ],
+      [
+       -10,
+       -256
+      ]
+     ]
+    },
+    {
+     "id": "f1-r7",
+     "name": "Caminadora",
+     "color": "room-blue",
+     "poly": [
+      [
+       -52,
+       -156
+      ],
+      [
+       -52,
+       -111
+      ],
+      [
+       3,
+       -111
+      ],
+      [
+       3,
+       -156
+      ]
+     ]
+    },
+    {
+     "id": "f1-r8",
+     "name": "Baño",
+     "color": "room-teal",
+     "poly": [
+      [
+       -109,
+       32
+      ],
+      [
+       -109,
+       55
+      ],
+      [
+       -86,
+       55
+      ],
+      [
+       -86,
+       68
+      ],
+      [
+       -72,
+       68
+      ],
+      [
+       -72,
+       76
+      ],
+      [
+       -59,
+       76
+      ],
+      [
+       -59,
+       40
+      ],
+      [
+       -79,
+       40
+      ],
+      [
+       -79,
+       32
+      ]
+     ]
+    }
+   ]
+  },
+  "2": {
+   "label": "2F",
+   "name": "Planta 2",
+   "rooms": [
+    {
+     "id": "f2-r0",
+     "name": "Hab. Isa",
+     "color": "room-pink",
+     "poly": [
+      [
+       -28,
+       27
+      ],
+      [
+       -92,
+       27
+      ],
+      [
+       -92,
+       46
+      ],
+      [
+       -134,
+       46
+      ],
+      [
+       -134,
+       156
+      ],
+      [
+       -114,
+       156
+      ],
+      [
+       -114,
+       172
+      ],
+      [
+       -133,
+       172
+      ],
+      [
+       -133,
+       267
+      ],
+      [
+       -64,
+       267
+      ],
+      [
+       -64,
+       172
+      ],
+      [
+       -20,
+       172
+      ],
+      [
+       -20,
+       200
+      ],
+      [
+       -6,
+       200
+      ],
+      [
+       -6,
+       166
+      ],
+      [
+       -28,
+       166
+      ]
+     ]
+    },
+    {
+     "id": "f2-r1",
+     "name": "Hab. Juan",
+     "color": "room-blue",
+     "poly": [
+      [
+       -133,
+       -265
+      ],
+      [
+       -133,
+       -109
+      ],
+      [
+       -48,
+       -109
+      ],
+      [
+       -48,
+       -72
+      ],
+      [
+       -10,
+       -72
+      ],
+      [
+       -10,
+       -262
+      ],
+      [
+       -56,
+       -262
+      ],
+      [
+       -56,
+       -242
+      ],
+      [
+       -82,
+       -242
+      ],
+      [
+       -82,
+       -265
+      ]
+     ]
+    },
+    {
+     "id": "f2-r2",
+     "name": "Hab. papás",
+     "color": "room-teal",
+     "poly": [
+      [
+       6,
+       -225
+      ],
+      [
+       6,
+       -210
+      ],
+      [
+       20,
+       -210
+      ],
+      [
+       20,
+       -186
+      ],
+      [
+       8,
+       -186
+      ],
+      [
+       8,
+       -78
+      ],
+      [
+       130,
+       -78
+      ],
+      [
+       130,
+       -100
+      ],
+      [
+       110,
+       -100
+      ],
+      [
+       110,
+       -122
+      ],
+      [
+       125,
+       -122
+      ],
+      [
+       125,
+       -186
+      ],
+      [
+       110,
+       -186
+      ],
+      [
+       110,
+       -208
+      ],
+      [
+       128,
+       -208
+      ],
+      [
+       128,
+       -225
+      ]
+     ]
+    },
+    {
+     "id": "f2-r3",
+     "name": "Pasillo",
+     "color": "room-sage",
+     "poly": [
+      [
+       48,
+       -71
+      ],
+      [
+       5,
+       -71
+      ],
+      [
+       5,
+       -65
+      ],
+      [
+       -134,
+       -65
+      ],
+      [
+       -134,
+       14
+      ],
+      [
+       -60,
+       14
+      ],
+      [
+       -60,
+       23
+      ],
+      [
+       -28,
+       23
+      ],
+      [
+       -28,
+       14
+      ],
+      [
+       14,
+       14
+      ],
+      [
+       14,
+       21
+      ],
+      [
+       48,
+       21
+      ]
+     ]
+    },
+    {
+     "id": "f2-r4",
+     "name": "Hab. visitas",
+     "color": "room-lilac",
+     "poly": [
+      [
+       19,
+       29
+      ],
+      [
+       19,
+       153
+      ],
+      [
+       68,
+       153
+      ],
+      [
+       68,
+       129
+      ],
+      [
+       134,
+       129
+      ],
+      [
+       134,
+       29
+      ]
+     ]
+    },
+    {
+     "id": "f2-r5",
+     "name": "Baño",
+     "color": "room-mint",
+     "poly": [
+      [
+       62,
+       -38
+      ],
+      [
+       62,
+       14
+      ],
+      [
+       110,
+       14
+      ],
+      [
+       110,
+       -6
+      ],
+      [
+       88,
+       -6
+      ],
+      [
+       88,
+       -38
+      ]
+     ]
+    }
+   ]
+  }
+ },
+ "openings": [
+  {
+   "floor": 1,
+   "room": 5,
+   "kind": "front",
+   "exterior": "W"
+  },
+  {
+   "floor": 1,
+   "room": 8,
+   "kind": "door",
+   "to": 5
+  },
+  {
+   "floor": 1,
+   "room": 4,
+   "kind": "door",
+   "to": 0
+  },
+  {
+   "floor": 1,
+   "room": 2,
+   "kind": "door",
+   "to": 4
+  },
+  {
+   "floor": 1,
+   "room": 7,
+   "kind": "door",
+   "to": 0
+  },
+  {
+   "floor": 1,
+   "room": 3,
+   "kind": "door",
+   "to": 0
+  },
+  {
+   "floor": 1,
+   "room": 6,
+   "kind": "door",
+   "to": 2
+  },
+  {
+   "floor": 1,
+   "room": 1,
+   "kind": "window",
+   "exterior": "S"
+  },
+  {
+   "floor": 1,
+   "room": 2,
+   "kind": "window",
+   "exterior": "E"
+  },
+  {
+   "floor": 2,
+   "room": 3,
+   "kind": "door",
+   "to": 0
+  },
+  {
+   "floor": 2,
+   "room": 3,
+   "kind": "door",
+   "to": 1
+  },
+  {
+   "floor": 2,
+   "room": 3,
+   "kind": "door",
+   "to": 2
+  },
+  {
+   "floor": 2,
+   "room": 3,
+   "kind": "door",
+   "to": 4
+  },
+  {
+   "floor": 2,
+   "room": 3,
+   "kind": "door",
+   "to": 5
+  },
+  {
+   "floor": 2,
+   "room": 0,
+   "kind": "window",
+   "exterior": null
+  },
+  {
+   "floor": 2,
+   "room": 1,
+   "kind": "window",
+   "exterior": null
+  },
+  {
+   "floor": 2,
+   "room": 2,
+   "kind": "window",
+   "exterior": null
+  },
+  {
+   "floor": 2,
+   "room": 4,
+   "kind": "window",
+   "exterior": null
+  }
+ ],
+ "fixtures": [
+  {
+   "type": "stairs",
+   "floor": 1,
+   "room": 5,
+   "steps": 12,
+   "run": 0.22,
+   "width": 0.9,
+   "rise": 0.2,
+   "x": -1.2,
+   "y": 0.55
+  }
+ ],
+ "devices": [
+  {
+   "id": "bartolo",
+   "name": "Bartolo",
+   "match": "bartolo",
+   "domains": [
+    "vacuum"
+   ],
+   "type": "robot",
+   "kind": "Aspiradora robot · Tuya",
+   "floor": 1,
+   "room": 0,
+   "role": "energy"
+  },
+  {
+   "id": "luzbano",
+   "name": null,
+   "match": "luz ba[ñn]o",
+   "domains": [
+    "light",
+    "switch"
+   ],
+   "type": "light",
+   "kind": "Bombillo · Tuya",
+   "floor": 1,
+   "room": 8,
+   "role": "light"
+  },
+  {
+   "id": "puerta",
+   "name": null,
+   "match": "puerta balc[oó]n",
+   "domains": [
+    "binary_sensor"
+   ],
+   "type": "sensor",
+   "kind": "Sensor · Tuya",
+   "floor": 1,
+   "room": 1,
+   "role": "security"
+  },
+  {
+   "id": "carga",
+   "name": null,
+   "match": "estaci[oó]n de carga",
+   "domains": [
+    "switch",
+    "light"
+   ],
+   "type": "switch",
+   "kind": "Enchufe · SmartThings",
+   "floor": 1,
+   "room": 1,
+   "role": "energy"
+  },
+  {
+   "id": "ws1",
+   "name": null,
+   "match": "work\\s?station\\s?1",
+   "domains": [
+    "switch"
+   ],
+   "type": "pc",
+   "kind": "Enchufe · SmartThings",
+   "floor": 1,
+   "room": 3,
+   "role": "energy"
+  },
+  {
+   "id": "ws2",
+   "name": null,
+   "match": "work\\s?station\\s?2",
+   "domains": [
+    "switch"
+   ],
+   "type": "pc",
+   "kind": "Enchufe · SmartThings",
+   "floor": 1,
+   "room": 3,
+   "role": "energy"
+  },
+  {
+   "id": "vent",
+   "name": null,
+   "match": "ventilador",
+   "domains": [
+    "switch",
+    "fan"
+   ],
+   "type": "fan",
+   "kind": "Enchufe · SmartThings",
+   "floor": 1,
+   "room": 3,
+   "role": "energy"
+  }
+ ],
+ "scenes": [
+  {
+   "id": "on",
+   "label": "Encender estación",
+   "match": "Energ[ií]a PC.*ON",
+   "domains": [
+    "scene",
+    "script",
+    "button"
+   ],
+   "icon": "M13 2L4 14h7l-1 8 9-12h-7z",
+   "color": "state-light"
+  },
+  {
+   "id": "off",
+   "label": "Apagar estación",
+   "match": "Energ[ií]a PC.*OFF",
+   "domains": [
+    "scene",
+    "script",
+    "button"
+   ],
+   "icon": "M12 3v9M6.5 6.5a8 8 0 1 0 11 0",
+   "color": "state-energy",
+   "confirm": "Esto apaga las pantallas y, en 1 minuto, la torre. ¿Cerraste Windows?"
+  }
+ ]
+}
