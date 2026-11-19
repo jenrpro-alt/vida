@@ -1502,8 +1502,8 @@ function boot(){
   send({type:'subscribe_events',event_type:'state_changed'});
   send({type:'frontend/get_user_data',key:'vida_bitacora'},function(r){var v=r.result&&r.result.value;S.dl=(v&&v.dl)?v.dl:{};if(!(v&&v.dl))saveDl();render()});
   send({type:'frontend/get_user_data',key:'vida_data'},function(r){var v=r.result&&r.result.value;
-    if(v){S.D={items:v.items||[],hid:v.hid||{},pin:v.pin||'',hidInit:v.hidInit,map:v.map||{},furn:v.furn||[],closet:v.closet||[],equip:v.equip||[],moto:v.moto||null,seeded:v.seeded,name:v.name,cat:v.cat}}
-    var nm1=normMoto();seedDemo();S.dataLoaded=true;if(nm1)saveD();syncMoto();if(S.D.cat===false)CAT.on=false;initHid();render()});
+    if(v){S.D={items:v.items||[],hid:v.hid||{},pin:v.pin||'',hidInit:v.hidInit,map:v.map||{},furn:v.furn||[],closet:v.closet||[],equip:v.equip||[],moto:v.moto||null,seeded:v.seeded,name:v.name,cat:v.cat,fraat:v.fraat||null}}
+    var nm1=normMoto();seedDemo();S.dataLoaded=true;if(nm1)saveD();syncMoto();if(S.D.cat===false)CAT.on=false;initHid();render();frSync()});
 }
 function saveDl(){if(S.ready)send({type:'frontend/set_user_data',key:'vida_bitacora',value:{dl:S.dl}})}
 function saveD(){if(S.ready&&S.dataLoaded)send({type:'frontend/set_user_data',key:'vida_data',value:S.D})}
@@ -1603,7 +1603,7 @@ SCREENS.home=function(){
    ['mo','Moto',IC.fuel,M?M.odo.toLocaleString('es-CO')+' km':'Apache RTR 160',M?(function(){var c=motoCalc(M);return 'Aceite en '+Math.max(0,c.oilLeft)+' km'})():(mn?mn.name+' · en '+dleft(mn.date)+' d':'Sin datos'),'moto'],
    ['ca','Casa',IC.home,pl(onN,'encendido','encendidos'),bi&&bi.bat!=null?'Bartolo '+bi.bat+' %':(bi?'Bartolo '+(STM[bi.st]||bi.st).toLowerCase():'Sin Bartolo'),'casa'],
    ['ba','Barbería',IC.scissors,bb?(bd<=0?'Ya toca':bd+' días'):'Sin registro','Miguel · cada '+(bb&&bb.ev?bb.ev:21)+' días','barb'],
-   ['as','Fraat',IC.card,'Sin conectar','Próximamente','fraat'],
+   ['as','Fraat',IC.card,frOn()?'Conectado':'Sin conectar',frOn()?(FR.err?'Sin respuesta':'Datos al día'):'Conecta con tu token','fraat'],
    ['sa','Salud',IC.pulse,S.unlocked?'Desbloqueado':'Protegido','Protegido con PIN','med']];
   var pct=eq.length?Math.round(eqOk*100/eq.length):0,nev=S.evs.filter(function(e){return !S.D.hid[e.c]})[0];
   out+='<div class="card hero"><div class="ring" style="--p:'+pct+'"><div>'+pct+'%<small>listo</small></div></div><div class="rt"><span class="lab">Prioridad'+(nev?' · '+esc(new Date(nev.s.length>10?nev.s:nev.s+'T00:00').toLocaleDateString('es-CO',{weekday:'short',day:'numeric'})):'')+'</span><div style="font-size:20px;line-height:26px;font-weight:500;letter-spacing:-.01em;margin:4px 0">'+(nev?esc(nev.t):'Sin eventos próximos')+'</div><div class="hint">Equipos: '+eqOk+' de '+eq.length+' listos</div></div></div>';
@@ -1769,7 +1769,7 @@ SCREENS.menu=function(){
   var subs=itemsOf('sub'),pend=S.todo.filter(function(i){return i.status!=='completed'}),eq=S.D.equip||[];
   var M=function(i,t,s,g){return row({ic:i,t:t,s:s,r:'<span style="color:var(--muted);font-size:18px">›</span>',at:'data-go="'+g+'"'})};
   var h=hdr('Menú','Todo en un solo lugar');
-  h+=card('Módulos',tiles([M(IC.card,'Suscripciones',pl(subs.length,'activa','activas'),'subs'),M(IC.cart,'Recompras',pend.length+' por comprar','compras'),M(IC.battery,'Equipos',eq.length+' registrados','equipos'),M(IC.moto,'Moto','Apache RTR 160 4V','moto'),M(IC.scissors,'Barbería','Miguel','barb'),M(IC.trash,'Aseo y basura','Tareas y horarios','aseo'),M(IC.hanger,'Closet',(S.D.closet||[]).length+' prendas','closet'),M(IC.card,'Fraat','Sin conectar','fraat'),M(IC.pulse,'Salud','Protegido','med')]));
+  h+=card('Módulos',tiles([M(IC.card,'Suscripciones',pl(subs.length,'activa','activas'),'subs'),M(IC.cart,'Recompras',pend.length+' por comprar','compras'),M(IC.battery,'Equipos',eq.length+' registrados','equipos'),M(IC.moto,'Moto','Apache RTR 160 4V','moto'),M(IC.scissors,'Barbería','Miguel','barb'),M(IC.trash,'Aseo y basura','Tareas y horarios','aseo'),M(IC.hanger,'Closet',(S.D.closet||[]).length+' prendas','closet'),M(IC.card,'Fraat',frOn()?'Conectado':'Sin conectar','fraat'),M(IC.pulse,'Salud','Protegido','med')]));
   h+=card('Casa',tiles([M(IC.map,'Plano 3D / cenital','Dos plantas','casa'),M(IC.robot,'Bartolo','Aspiradora','bartolo'),M(IC.map,'Cámaras','CareCam Pro','camaras')]));
   h+=card('Ajustes',tiles([M(IC.menu,'Ajustes','Perfil, PIN, respaldo, gato','ajustes'),M(IC.pulse,'Lo que falta','Pendientes para completar Vida','pend')]));
   h+=card('Conexión','<div class="rows">'+row({t:'Hub',s:esc(S.base),r:'<span class="'+(S.ready?'on-t':'bad-t')+'">'+(S.ready?'Conectado':'Sin conexión')+'</span>'})+'</div><button class="btn w f" id="logout">Desconectar este dispositivo</button>');
@@ -1837,7 +1837,7 @@ function pendList(){
    [!!S.states[MH.odo],'App TVS conectada','Tu app envía el odómetro a Home Assistant (input_number.moto_odo)','moto'],
    [Object.keys(S.dl||{}).length>3,'Bitácora','Marca tus días de oficina, casa y finde','home'],
    [(S.D.closet||[]).length>0,'Closet','Agrega tus prendas','closet'],
-   [false,'Fraat','Necesita un endpoint que envíe datos a Vida','fraat'],
+   [!frOn(),'Fraat','Conecta Vida con el token de Fraat','fraat'],
    [false,'Gato Lio real','Falta el archivo .glb (por ahora hay un gato aleatorio en el mapa)','casa'],
    [false,'Typhur, CareCam, Samsung Health','Integraciones aún sin conectar a HA','ajustes']];
   return P}
@@ -1885,7 +1885,76 @@ SCREENS.closet=function(){
   if(!L.length)h+=card('','<div class="empty">Sin prendas todavía.</div>');
   return h+'<button class="btn p f" data-cladd="1">+ Agregar prenda</button>';
 };
-SCREENS.fraat=function(){return hdr('Fraat','Gastos y suscripciones detectadas')+card('Estado','<div class="n" style="font-size:20px;line-height:26px;font-weight:500">Aún no está conectado</div><div class="hint">Cuando Fraat pueda enviar sus datos a Vida, las suscripciones detectadas aparecerán aquí para que las apruebes. Mientras tanto, registra las tuyas en Suscripciones.</div><button class="btn f" data-go="subs">Ir a Suscripciones</button>')};
+// ---------- Fraat: lectura de avisos y resumen (la conexión la abre Fraat con un token de solo lectura)
+var FR={busy:0,sum:null,err:'',t:0};
+function nn(x){return String(x||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'')}
+function frCfg(){if(!S.D.fraat)S.D.fraat={base:'',tok:'',last:0,init:0,log:[],map:{},pend:{},mask:1};return S.D.fraat}
+function frOn(){var c=S.D&&S.D.fraat;return !!(c&&c.base&&c.tok)}
+function frGet(p){var c=frCfg();return fetch(c.base.replace(/\/$/,'')+p,{headers:{Authorization:'Bearer '+c.tok}}).then(function(r){if(!r.ok)throw new Error(r.status===401?'Token inválido o revocado':'Fraat respondió '+r.status);return r.json()})}
+function frLog(t){var c=frCfg();c.log.unshift({d:new Date().toLocaleString('es-CO',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}),t:t});c.log=c.log.slice(0,30)}
+function frNext(it,fecha){var n=fecha;if(it.ev)n=addDays(fecha,it.ev);it.date=n;it.last=fecha;return n}
+function frItem(cat,test){return S.D.items.filter(function(i){return i.cat===cat&&(!test||test(i))})[0]}
+function frApply(e){
+  var c=frCfg(),f=e.fecha||key(today()),it;
+  var mp=c.map&&c.map[e.evento];
+  if(mp){it=S.D.items.filter(function(x){return x.id===mp})[0];if(it){frNext(it,f);return it.name+': contador reiniciado ('+f+')'}}
+  switch(e.evento){
+    case 'barberia':
+      it=frItem('barb');if(!it){it={id:'f'+Date.now(),cat:'barb',name:'Corte con Miguel',date:f,ev:21,where:'',al:3};S.D.items.push(it)}
+      var n=frNext(it,f);return 'Barbería: contador reiniciado · próxima visita el '+n;
+    case 'moto_gasolina':
+      var M=S.D.moto;if(!M)return 'Gasolina registrada (sin datos de moto)';
+      var fr=e.monto?Math.min(1,e.monto/52000):1,r=Math.round(fr*(M.range||320));M.tripFuel=Math.max(0,(M.tripFuel||0)-r);M.fuelLast=f;pushMoto();
+      return 'Moto: gasolina de $ '+(e.monto?Math.round(e.monto).toLocaleString('es-CO'):'—')+' · tanque recuperó '+r+' km';
+    case 'moto_taller':if(S.D.moto)S.D.moto.taller=f;return 'Moto: visita al taller registrada ('+f+')';
+    case 'moto_peaje':return 'Moto: peaje registrado';
+    case 'moto_documento':
+      it=frItem('moto',function(i){var q=nn(e.comercio);return nn(i.name)&&q.indexOf(nn(i.name))>=0})||null;
+      if(it){var n2=addDays(f,it.ev||365);it.date=n2;it.last=f;return it.name+': renovado hasta el '+n2}return 'Documento de la moto pagado (elige cuál en Moto)';
+    case 'suscripcion_pago':
+      it=frItem('sub',function(i){return nn(i.name)&&nn(e.comercio).indexOf(nn(i.name))>=0});
+      if(it){if(Math.abs(dleft(it.date))<=10||dleft(it.date)<0){var d2=it.date;do{d2=addDays(d2,it.ev||30)}while(dleft(d2)<=0);it.date=d2}return it.name+': pagada · próxima '+it.date}return 'Suscripción pagada: '+(e.comercio||'');
+    case 'farmacia':return 'Farmacia: compra registrada';
+    case 'prueba':return 'Prueba de conexión recibida';
+  }
+  c.pend[e.evento]=(e.regla||e.evento)+(e.comercio?' · '+e.comercio:'');return null;
+}
+function frSync(force){
+  if(!frOn()||!S.ready||!S.dataLoaded||FR.busy)return;
+  if(!force&&Date.now()-FR.t<60000)return;
+  FR.busy=1;var c=frCfg(),ch=false;
+  frGet('/api/vida/eventos?desde='+(c.last||0)).then(function(r){
+    if(!c.init){c.init=1;c.last=r.ultimo;frLog('Conectado. Desde ahora Fraat avisa de lo nuevo');ch=true;return}
+    r.eventos.forEach(function(e){if(e.id<=c.last)return;c.last=e.id;ch=true;if(e.anulado)return;var m=frApply(e);frLog(m||'Sin acción asignada: '+(e.regla||e.evento))});
+  }).then(function(){return frGet('/api/vida/resumen').then(function(x){FR.sum=x})}).then(function(){FR.err='';FR.t=Date.now()}).catch(function(e){FR.err=(e&&e.message)||'Sin conexión';FR.t=Date.now()}).then(function(){FR.busy=0;if(ch)saveD();if(S.scr==='fraat'||S.scr==='home')softRender()});
+}
+function frBind(){
+  var c=frCfg(),g=$('#fr_go');
+  if(g)g.onclick=function(){var b=$('#fr_b').value.trim(),t=$('#fr_t').value.trim();if(!/^https?:\/\//.test(b)||!t){$('#fr_e').textContent='Escribe la dirección y pega el token.';return}c.base=b;c.tok=t;c.init=0;c.last=0;FR.t=0;saveD();frSync(true);render()};
+  var sy=$('#fr_sync');if(sy)sy.onclick=function(){frSync(true)};
+  var mk=$('#fr_mask');if(mk)mk.onclick=function(){c.mask=c.mask===0?1:0;saveD();render()};
+  var of=$('#fr_off');if(of)of.onclick=function(){if(confirm('¿Desconectar Fraat de Vida?')){S.D.fraat=null;FR.sum=null;saveD();render()}};
+  [].forEach.call(document.querySelectorAll('[data-frmap]'),function(sel){sel.onchange=function(){if(!sel.value)return;c.map[sel.dataset.frmap]=sel.value;delete c.pend[sel.dataset.frmap];saveD();render()}});
+}
+setInterval(function(){frSync()},180000);document.addEventListener('visibilitychange',function(){if(!document.hidden)frSync()});
+SCREENS.fraat=function(){
+  var c=frCfg(),h=hdr('Fraat','Gastos, avisos y datos abiertos');
+  if(!frOn()){
+    return h+card('Conectar','<div class="hint">En Fraat: Ajustes → Integraciones → Generar token para Vida. Pégalo aquí.</div><div class="hint">Dirección de Fraat</div><input id="fr_b" value="'+esc(c.base||'https://149-50-144-208.sslip.io')+'"><div class="hint">Token de Vida</div><input id="fr_t" type="password" autocomplete="off" placeholder="vida_…"><div class="hint" id="fr_e" style="color:var(--bad,#ff8a8a)"></div><button class="btn p f" id="fr_go">Conectar</button>');
+  }
+  var m=c.mask!==0,S0=FR.sum,v=function(n){return m?'••••':'$ '+Math.round(n).toLocaleString('es-CO')};
+  h+=card('Estado','<div class="n" style="font-size:20px;line-height:26px;font-weight:500">'+(FR.err?'Sin respuesta':'Conectado')+'</div><div class="hint">'+(FR.err?esc(FR.err):(FR.t?'Última lectura '+new Date(FR.t).toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'}):'Leyendo…'))+'</div><button class="btn f" id="fr_sync">Sincronizar ahora</button>');
+  if(S0)h+=card('Resumen · '+S0.mes,rows([
+    row({ic:IC.card,t:'Disponible hoy',r:'<b>'+v(S0.disponible)+'</b>'}),
+    row({ic:IC.card,t:'Gastos del mes',r:'<b>'+v(S0.gastos_mes)+'</b>'}),
+    row({ic:IC.card,t:'Resultado del mes',r:'<b>'+v(S0.resultado_mes)+'</b>'}),
+    row({ic:IC.card,t:'Por aprobar en Fraat',r:'<b>'+S0.por_aprobar+'</b>'}),
+    row({ic:IC.card,t:'Me deben',s:S0.me_deben.n+' pendientes',r:'<b>'+v(S0.me_deben.monto)+'</b>'})])+'<button class="btn f" id="fr_mask">'+(m?'Mostrar montos':'Ocultar montos')+'</button><div class="hint">Por defecto se ocultan, por si hay visitas en casa.</div>');
+  var un=Object.keys(c.pend||{});
+  if(un.length)h+=card('Avisos sin acción · '+un.length,tiles(un.map(function(k){return '<div class="hint">'+esc(c.pend[k])+'</div><select data-frmap="'+esc(k)+'"><option value="">Elegir qué contador reiniciar…</option>'+S.D.items.map(function(it){return '<option value="'+it.id+'">'+esc(CATS[it.cat].n+' · '+it.name)+'</option>'}).join('')+'</select>'})));
+  h+=card('Últimos avisos de Fraat',(c.log&&c.log.length)?tiles(c.log.slice(0,12).map(function(l){return row({ic:IC.pulse,t:esc(l.t),s:esc(l.d)})})):'<div class="empty">Todavía no ha llegado ninguno.</div>');
+  return h+'<button class="btn w f" id="fr_off">Desconectar Fraat</button>';
+};
 // ---------- Modales
 function modalShell(inner){$('#md').innerHTML='<div class="modal" id="mbg"><div class="sheet">'+inner+'</div></div>';$('#mbg').onclick=function(e){if(e.target.id==='mbg')closeModal()}}
 function closeModal(){S.modal=null;$('#md').innerHTML='';render()}
@@ -1985,6 +2054,7 @@ function bind(){
   var ae=$('#a_exp');if(ae)ae.onclick=function(){var j=JSON.stringify({D:S.D,dl:S.dl});var ta=$('#a_ta');ta.style.display='block';ta.value=j;ta.select();try{navigator.clipboard.writeText(j)}catch(e){try{document.execCommand('copy')}catch(e2){}}ae.textContent='Copiado'};
   var ai=$('#a_imp');if(ai)ai.onclick=function(){var ta=$('#a_ta');if(ta.style.display==='none'){ta.style.display='block';ta.value='';ai.textContent='Aplicar';return}try{var o=JSON.parse(ta.value);if(!o.D)throw 0;S.D=o.D;if(o.dl){S.dl=o.dl;saveDl()}saveD();render()}catch(e){ai.textContent='Respaldo inválido'}};
   var ad=$('#a_demo');if(ad)ad.onclick=function(){if(confirm('¿Borrar los registros de ejemplo?')){S.D.items=S.D.items.filter(function(i){return !i.demo});saveD();render()}};
+  frBind();
   var lo=$('#logout');if(lo)lo.onclick=function(){if(confirm('¿Desconectar este dispositivo?')){localStorage.removeItem('vida-token');location.reload()}};
 }
 setInterval(function(){if(S.scr==='home'&&S.tok)softRender()},30000);
