@@ -1657,7 +1657,7 @@ function furnEditor(){
 function mapRoom(i){if(!S.mmove)return;S.D.map=S.D.map||{};S.D.map[S.mmove]={f:S.mf,r:i};S.mmove='';saveD();render()}
 // ---------- BARTOLO
 var BTR={'water level':'Nivel de agua','work mode':'Modo de trabajo','cleaning mode':'Modo de limpieza','resume cleaning':'Retomar limpieza','customize mode':'Modo personalizado','do not disturb mode':'No molestar','do not disturb':'No molestar','suction':'Succión','voice':'Voz y volumen','volume':'Volumen','dust collection':'Recolección de polvo','mopping status':'Trapeado','side brush':'Cepillo lateral','main brush':'Cepillo principal','roller brush':'Cepillo giratorio','filter':'Filtro','mop':'Trapo','cleaning time':'Tiempo de limpieza','cleaning area':'Área limpiada','total':'Total'};
-var OPT={eco:'Eco · 1000 Pa',standard:'Estándar · 2000 Pa',max:'Max · 4500 Pa',low:'Bajo',middle:'Medio',high:'Alto',off:'Apagado',sweep:'Barrer',mop:'Trapear',sweep_and_mop:'Barrer y trapear',closed:'Cerrado',normal:'Normal',strong:'Fuerte',quiet:'Silencioso'};
+var OPT={eco:'Eco',standard:'Estándar',max:'Max',low:'Bajo',middle:'Medio',high:'Alto',off:'Apagado',sweep:'Barrer',mop:'Trapear',sweep_and_mop:'Barrer y trapear',closed:'Cerrado',normal:'Normal',strong:'Fuerte',quiet:'Silencioso',gentle:'Suave',smart:'Inteligente',chargego:'Recarga automática',zone:'Por zona',pose:'Punto',part:'Parcial'};
 function btn(e){var n=nm(e).replace(/^bartolo\s*/i,'').trim(),k=n.toLowerCase();return BTR[k]||n.replace(/^./,function(c){return c.toUpperCase()})}
 function optL(o){var k=String(o).toLowerCase().replace(/[\s-]+/g,'_');return OPT[k]||String(o).replace(/_/g,' ').replace(/^./,function(c){return c.toUpperCase()})}
 function loadBdev(){
