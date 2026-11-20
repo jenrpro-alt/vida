@@ -1617,14 +1617,13 @@ SCREENS.home=function(){
    ['su','Suscripciones',IC.card,pl(subs.length,'activa','activas'),soon?(soon===1?'1 vence esta semana':soon+' vencen esta semana'):(subs.length?'Todo al día':'Registra las tuyas'),'subs'],
    ['re','Recompras',IC.cart,pend.length+' por comprar',pend.slice(0,2).map(function(i){return i.summary}).join(', ')||'Nada por ahora','compras'],
    ['eq','Equipos',IC.battery,eq.length?eqOk+' de '+eq.length:'Sin equipos',eq.length?'listos para grabar':'Agrégalos','equipos'],
-   ['mo','Moto',IC.fuel,M?M.odo.toLocaleString('es-CO')+' km':'Apache RTR 160',M?(function(){var c=motoCalc(M);return 'Aceite en '+Math.max(0,c.oilLeft)+' km'})():(mn?mn.name+' · en '+dleft(mn.date)+' d':'Sin datos'),'moto'],
    ['ca','Casa',IC.home,pl(onN,'encendido','encendidos'),bi&&bi.bat!=null?'Bartolo '+bi.bat+' %':(bi?'Bartolo '+(STM[bi.st]||bi.st).toLowerCase():'Sin Bartolo'),'casa'],
    ['ba','Barbería',IC.scissors,bb?(bd<=0?'Ya toca':bd+' días'):'Sin registro','Miguel · cada '+(bb&&bb.ev?bb.ev:21)+' días','barb'],
    ['as','Fraat',IC.card,frOn()?'Conectado':'Sin conectar',frOn()?(FR.err?'Sin respuesta':'Datos al día'):'Conecta con tu token','fraat'],
    ['sa','Salud',IC.pulse,S.unlocked?'Desbloqueado':'Protegido','Protegido con PIN','med']];
   var pct=eq.length?Math.round(eqOk*100/eq.length):0,nev=S.evs.filter(function(e){return !S.D.hid[e.c]})[0];
   out+='<div class="card hero"><div class="ring" style="--p:'+pct+'"><div>'+pct+'%<small>listo</small></div></div><div class="rt"><span class="lab">Prioridad'+(nev?' · '+esc(new Date(nev.s.length>10?nev.s:nev.s+'T00:00').toLocaleDateString('es-CO',{weekday:'short',day:'numeric'})):'')+'</span><div style="font-size:20px;line-height:26px;font-weight:500;letter-spacing:-.01em;margin:4px 0">'+(nev?esc(nev.t):'Sin eventos próximos')+'</div><div class="hint">Equipos: '+eqOk+' de '+eq.length+' listos</div></div></div>';
-  out+='<div class="tiles">'+T.map(function(t){return '<button class="tile" data-go="'+t[5]+'"><span class="t">'+t[1]+'</span><span class="go">'+ic('M7 17L17 7M9 7h8v8',18)+'</span><span class="b">'+esc(t[3])+'</span><span class="f">'+esc(t[4])+'</span></button>'}).join('')+'</div>';
+  out+='<div class="tiles">'+T.map(function(t,ti){return '<button class="tile"'+(T.length%2&&ti===T.length-1?' style="grid-column:1/-1"':'')+' data-go="'+t[5]+'"><span class="t">'+t[1]+'</span><span class="go">'+ic('M7 17L17 7M9 7h8v8',18)+'</span><span class="b">'+esc(t[3])+'</span><span class="f">'+esc(t[4])+'</span></button>'}).join('')+'</div>';
   out+=S.cals.length?calView():agendaCard();
   out+='</div><div class="hcol">';
   if(bi)out+='<button class="bhero sm" data-go="bartolo"><img src="'+BART_IMG+'" alt="" draggable="false"><div class="bl"><div><small>BPMIG</small><h2>Bartolo</h2></div><div style="display:flex;gap:var(--space-6)"><div><small>Estado</small><b>'+esc(STM[bi.st]||bi.st)+'</b></div><div><small>Batería</small><b>'+(bi.bat!=null?bi.bat+' %':'—')+'</b></div></div></div></button>';
@@ -1632,7 +1631,7 @@ SCREENS.home=function(){
   var al=alerts();
   if(bi)find(/bartolo.*vida [uú]til/i,['sensor']).forEach(function(e){if(parseFloat(e.state)===0)al.push({name:nm(e).replace(/^bartolo\s*/i,'')+' · reemplazar',cat:'bartolo',nodate:1})});
   if(tuyaDown())al.unshift({name:'Tuya se desconectó',cat:'bartolo',nodate:1,sub:'Reconecta la integración en Home Assistant',go:'pend'});
-  if(al.length)out+=card('Hoy',tiles(al.slice(0,6).map(function(it){return row({ic:it.nodate?IC.robot:IC[CATS[it.cat].ic],t:esc(it.name),s:it.nodate?(it.sub||'Bartolo'):CATS[it.cat].n+(it.where?' · '+esc(it.where):''),r:it.nodate?'<span class="badge bad">Revisar</span>':itemBadge(it),at:'data-go="'+(it.nodate?(it.go||'bartolo'):it.cat==='sub'?'subs':it.cat)+'"'})})));
+  if(al.length)out+=card('Hoy',tiles(al.slice(0,6).map(function(it){return row({ic:it.nodate?IC.robot:IC[CATS[it.cat].ic],t:esc(it.name)+(it.demo?' <span class="badge">ejemplo</span>':''),s:it.nodate?(it.sub||'Bartolo'):CATS[it.cat].n+(it.where?' · '+esc(it.where):''),r:it.nodate?'<span class="badge bad">Revisar</span>':itemBadge(it),at:'data-go="'+(it.nodate?(it.go||'bartolo'):it.cat==='sub'?'subs':it.cat)+'"'})})));
   out+=bitacoraCard();
   out+=pendCard(true);
   return out+'</div></div>';
@@ -1646,7 +1645,7 @@ function bitacoraCard(){
     h+='<button class="cell'+(k===tk?' today':'')+(k===S.sel?' sel':'')+'" data-d="'+k+'"><span class="egg" style="'+egg(v)+'">'+(v?FACE[v]:'+')+'</span><span class="num">'+d+'</span></button>'}
   var pick='';
   if(S.sel)pick='<div class="pick">'+['o','c','f'].map(function(v){return '<button data-v="'+v+'"><span class="egg" style="'+egg(v)+';width:38px;height:42px;border-radius:50% 50% 46% 46%/58% 58% 42% 42%;display:flex;align-items:center;justify-content:center">'+FACE[v]+'</span>'+LB[v]+'</button>'}).join('')+'<button data-v="x"><span style="width:38px;height:42px;display:flex;align-items:center;justify-content:center;font-size:20px">✕</span>Borrar</button></div>';
-  return '<div class="card"><div style="display:flex;align-items:center;justify-content:space-between"><span class="lab">Bitácora · '+MES[vd.getMonth()]+' '+vd.getFullYear()+'</span><span style="display:flex;gap:6px"><button class="circ s" id="pv" aria-label="Mes anterior">‹</button><button class="circ s" id="nx" aria-label="Mes siguiente">›</button></span></div><div class="cal">'+h+'</div>'+pick+'<div class="cnt">'+['o','c','f'].map(function(v){return '<span><i class="mini" style="'+egg(v)+'"></i>'+cnt[v]+'</span>'}).join('')+'</div></div>';
+  return '<div class="card"><div style="display:flex;align-items:center;justify-content:space-between"><span class="lab">Bitácora Neat · '+MES[vd.getMonth()]+' '+vd.getFullYear()+'</span><span style="display:flex;gap:6px"><button class="circ s" id="pv" aria-label="Mes anterior">‹</button><button class="circ s" id="nx" aria-label="Mes siguiente">›</button></span></div><div class="cal">'+h+'</div>'+pick+'<div class="cnt">'+['o','c','f'].map(function(v){return '<span><i class="mini" style="'+egg(v)+'"></i>'+cnt[v]+'</span>'}).join('')+'</div></div>';
 }
 function agendaCard(){
   var tk=key(new Date()),seen={};
@@ -1803,7 +1802,7 @@ function modScreen(cat){return function(){
   if(cat==='barb'&&list[0]){var d=dleft(list[0].date);st='<div class="stats"><div><b>'+(d<=0?'Ya toca':d+' d')+'</b><span>Próximo corte</span></div><div><b>'+(list[0].ev||21)+' d</b><span>Cada</span></div></div>'}
   if(cat==='sub')st='<div class="stats"><div><b>'+list.length+'</b><span>Activas</span></div><div><b style="color:'+(list.filter(function(i){return dleft(i.date)<=7}).length?'var(--warn)':'var(--text)')+'">'+list.filter(function(i){return dleft(i.date)<=7}).length+'</b><span>Vencen en 7 días</span></div></div>';
   if(st)h+=card('',st);
-  var mk=function(it){return row({ic:IC[C.ic],t:esc(it.name),s:(it.where?esc(it.where)+' · ':'')+new Date(it.date+'T00:00').toLocaleDateString('es-CO',it.date.slice(0,4)===String(new Date().getFullYear())?{day:'numeric',month:'short'}:{day:'numeric',month:'short',year:'numeric'})+(it.time?' · '+hhmm(it.time):'')+((it.ev||(it.wd&&it.wd.length))?' · '+freqTxt(it):''),r:itemBadge(it),at:'data-it="'+it.id+'"'})};
+  var mk=function(it){return row({ic:IC[C.ic],t:esc(it.name)+(it.demo?' <span class="badge">ejemplo</span>':''),s:(it.where?esc(it.where)+' · ':'')+new Date(it.date+'T00:00').toLocaleDateString('es-CO',it.date.slice(0,4)===String(new Date().getFullYear())?{day:'numeric',month:'short'}:{day:'numeric',month:'short',year:'numeric'})+(it.time?' · '+hhmm(it.time):'')+((it.ev||(it.wd&&it.wd.length))?' · '+freqTxt(it):''),r:itemBadge(it),at:'data-it="'+it.id+'"'})};
   h+=list.length?rangeCards(list,mk):card(C.n,'<div class="empty">Nada registrado.</div>');
   h+='<button class="btn p f" data-add="'+cat+'">+ Agregar</button>';
   if(cat==='med')h+='<button class="btn f" id="plock">Bloquear sección</button>';
@@ -1852,7 +1851,7 @@ function pendList(){
    [!!S.D.pin,'PIN de Salud','Crea tu PIN','med'],
    [demo===0,'Datos de ejemplo','Tienes '+demo+' registros de ejemplo: ajústalos con tus fechas reales','menu'],
    [!!S.states[MH.odo],'App TVS conectada','Tu app envía el odómetro a Home Assistant (input_number.moto_odo)','moto'],
-   [Object.keys(S.dl||{}).length>3,'Bitácora','Marca tus días de oficina, casa y finde','home'],
+   [Object.keys(S.dl||{}).length>3,'Bitácora Neat','Marca tus días de oficina, casa y finde','home'],
    [(S.D.closet||[]).length>0,'Closet','Agrega tus prendas','closet'],
    [!frOn(),'Fraat','Conecta Vida con el token de Fraat','fraat'],
    [false,'Gato Lio real','Falta el archivo .glb (por ahora hay un gato aleatorio en el mapa)','casa'],
