@@ -1823,11 +1823,11 @@ setInterval(function(){var C=S.cam;if(S.scr!=='camaras'||S.modal||!C||!C.base)re
 function camLive(id){var C=S.cam,i=C.list.findIndex(function(c){return c.id===id});if(i<0)return;S.modal={cam:1};
   var pad=function(d,g){return '<button class="btn" data-cd="'+d+'" data-cid="'+id+'" style="width:100%;padding:0;'+(g||'')+'">'+({up:'▲',down:'▼',left:'◀',right:'▶'})[d]+'</button>'};
   modalShell('<div class="tt" style="font-size:24px;line-height:28px">'+esc(camName(C.list[i],i))+'</div>'+
-    '<div style="position:relative;margin-top:var(--space-3)"><img id="camlive" src="'+esc(C.base)+'/mjpeg/'+id+'" alt="" draggable="false" style="width:100%;aspect-ratio:16/9;object-fit:contain;border-radius:var(--radius-card-md);background:rgba(0,0,0,.45)"></div>'+
-    '<div class="hint" style="margin-top:var(--space-2)">La imagen se actualiza cada pocos segundos (viene por la nube del fabricante).</div>'+
+    '<div style="position:relative;margin-top:var(--space-3);aspect-ratio:16/9;border-radius:var(--radius-card-md);overflow:hidden;background:rgba(0,0,0,.45)"><iframe id="camlive" src="'+esc(C.base)+'/player/'+id+'" style="border:0;width:100%;height:100%;display:block" allow="autoplay"></iframe></div>'+
+    '<div class="hint" style="margin-top:var(--space-2)">Video en vivo directo de la cámara. Tarda unos segundos en arrancar.</div>'+
     '<div style="display:grid;grid-template-columns:repeat(3,64px);grid-template-rows:repeat(3,52px);gap:8px;justify-content:center;margin:var(--space-4) 0"><span></span>'+pad('up')+'<span></span>'+pad('left')+'<span></span>'+pad('right')+'<span></span>'+pad('down')+'<span></span></div>'+
     '<div style="display:flex;gap:var(--space-3)"><button class="btn" id="camren" style="flex:1">Renombrar</button><button class="btn p" id="m_x" style="flex:1">Cerrar</button></div>');
-  $('#m_x').onclick=function(){var im=$('#camlive');if(im)im.removeAttribute('src');closeModal()};
+  $('#m_x').onclick=function(){var im=$('#camlive');if(im)im.src='about:blank';closeModal()};
   $('#camren').onclick=function(){var v=prompt('Nombre de la cámara',camNames()[id]||'');if(v!==null){var n=camNames();n[id]=v.trim();try{localStorage.setItem('vida-cam-names',JSON.stringify(n))}catch(e){}$('#m_x').onclick()}}}
 var camHold=null;
 document.addEventListener('pointerdown',function(e){var b=e.target.closest&&e.target.closest('[data-cd]');if(!b||!S.cam||!S.cam.base)return;
