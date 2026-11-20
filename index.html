@@ -1784,21 +1784,60 @@ SCREENS.bartolo=function(){
 };
 // ---------- Cámaras
 SCREENS.camaras=function(){
-  var base=camBase(),h=hdr('Cámaras','CareCam Pro · puente en el portátil');
-  h+='<div class="card" style="padding:0;overflow:hidden"><div id="camwrap" style="height:calc(100vh - 250px);min-height:380px;display:flex;align-items:center;justify-content:center"><div class="hint" style="padding:var(--space-5)">Conectando con el puente de cámaras…</div></div></div>';
-  h+='<div class="card"><span class="lab">Puente de cámaras</span><div class="hint" id="cambase">'+esc(base)+'</div><button class="btn f" id="camset">Cambiar dirección</button></div>';
-  setTimeout(camLoad,0);
+  var C=S.cam=S.cam||{base:'',list:null,ev:[],busy:false,tried:false};
+  if(!C.base&&!C.busy&&!C.tried)setTimeout(camConnect,0);
+  var h=hdr('Cámaras',C.list?C.list.filter(function(c){return c.online}).length+' de '+C.list.length+' en línea':(C.busy?'Conectando…':'Sin conexión'));
+  if(!C.list){
+    return h+card('Puente de cámaras',(C.busy?'<div class="hint">Buscando el puente en el portátil…</div>':'<div class="hint">No hay conexión con el puente de cámaras. Revisa que el portátil esté encendido. Fuera de casa necesita Tailscale en el portátil. Dirección probada: '+esc(camBase())+'</div><button class="btn f" id="camretry">Reintentar</button>')+'<button class="btn" id="camset" style="margin-top:var(--space-3)">Cambiar dirección</button>');
+  }
+  C.list.forEach(function(c,i){
+    h+=gcard(esc(camName(c,i)),c.online?'en línea':'sin señal',c.online?'ok':'bad','<div style="position:relative"><img class="cam camb" data-cam="'+c.id+'" src="'+esc(C.base)+'/snap/'+c.id+'.jpg?max_age=60&t='+Date.now()+'" alt="" draggable="false" style="width:100%;border-radius:var(--radius-card-md);background:rgba(0,0,0,.35);min-height:140px;aspect-ratio:16/9;object-fit:cover"></div><button class="btn f" data-camlive="'+c.id+'" style="margin-top:var(--space-3)">Ver en vivo y mover</button>');
+  });
+  var ev=(C.ev||[]).slice(0,8);
+  h+=card('Eventos recientes',ev.length?rows(ev.map(function(e){var i=C.list.findIndex(function(c){return c.id===e.camera});return row({ic:IC.robot,t:'Movimiento · '+esc(i>=0?camName(C.list[i],i):'Cámara'),s:esc((e.ts||'').replace('T',' ').slice(0,16))})})):'<div class="hint">Sin eventos desde que arrancó el puente.</div>');
+  h+=card('Puente',' <div class="hint">'+esc(C.base)+'</div><button class="btn" id="camset">Cambiar dirección</button>');
   return h};
 function camBase(){var v='';try{v=localStorage.getItem('vida-cam-bridge')||''}catch(e){}return (v||'http://192.168.1.23:8765').replace(/\/$/,'')}
-function camLoad(){
-  var w=document.getElementById('camwrap');if(!w)return;var base=camBase();
-  var fail=function(){var w2=document.getElementById('camwrap');if(w2)w2.innerHTML='<div class="hint" style="padding:var(--space-5)">No hay conexión con el puente de cámaras ('+esc(base)+'). Revisa que el portátil esté encendido y en la misma red. Si cambió de IP, ajusta la dirección abajo.</div>'};
-  var t=setTimeout(fail,6000);
-  fetch(base+'/health',{cache:'no-store'}).then(function(r){return r.json()}).then(function(){clearTimeout(t);var w2=document.getElementById('camwrap');
-    if(w2)w2.innerHTML='<iframe src="'+esc(base)+'/ui" style="border:0;width:100%;height:100%;display:block" allow="fullscreen"></iframe>'}).catch(function(){clearTimeout(t);fail()})}
-document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('#camset');if(!b)return;
+function camNames(){try{return JSON.parse(localStorage.getItem('vida-cam-names')||'{}')}catch(e){return{}}}
+function camName(c,i){return camNames()[c.id]||('Cámara '+(i+1))}
+function camCands(){var out=[camBase()],ips=[];try{ips=JSON.parse(localStorage.getItem('vida-cam-ips')||'[]')}catch(e){}
+  ips.forEach(function(ip){var u='http://'+ip+':8765';if(out.indexOf(u)<0)out.push(u)});return out}
+function camFetch(u,ms){return new Promise(function(res,rej){var ac=window.AbortController?new AbortController():null,t=setTimeout(function(){if(ac)ac.abort();rej(0)},ms);
+  fetch(u,{cache:'no-store',signal:ac?ac.signal:undefined}).then(function(r){return r.json()}).then(function(j){clearTimeout(t);res(j)}).catch(function(){clearTimeout(t);rej(0)})})}
+function camConnect(){var C=S.cam;if(C.busy)return;C.busy=true;C.tried=true;if(S.scr==='camaras')render();
+  var c=camCands(),i=0;
+  (function next(){if(i>=c.length){C.busy=false;C.base='';C.list=null;if(S.scr==='camaras')render();return}
+    var u=c[i++];
+    camFetch(u+'/health',2500).then(function(h){
+      try{if(h.ips&&h.ips.length)localStorage.setItem('vida-cam-ips',JSON.stringify(h.ips))}catch(e){}
+      return camFetch(u+'/cameras',6000).then(function(l){C.base=u;C.list=l;C.busy=false;
+        camFetch(u+'/events?limit=10',4000).then(function(e){C.ev=e;if(S.scr==='camaras'&&!S.modal)render()}).catch(function(){});
+        if(S.scr==='camaras')render()})}).catch(next)})()}
+var camImgBusy={};
+setInterval(function(){var C=S.cam;if(S.scr!=='camaras'||S.modal||!C||!C.list||document.hidden)return;
+  document.querySelectorAll('img.camb').forEach(function(im){var id=im.getAttribute('data-cam');if(camImgBusy[id])return;camImgBusy[id]=1;
+    var n=new Image();n.onload=function(){camImgBusy[id]=0;im.src=n.src};n.onerror=function(){camImgBusy[id]=0};n.src=C.base+'/snap/'+id+'.jpg?max_age=4&t='+Date.now()})},6000);
+setInterval(function(){var C=S.cam;if(S.scr!=='camaras'||S.modal||!C||!C.base)return;
+  camFetch(C.base+'/cameras',4000).then(function(l){C.list=l}).catch(function(){});
+  camFetch(C.base+'/events?limit=10',4000).then(function(e){C.ev=e}).catch(function(){})},15000);
+function camLive(id){var C=S.cam,i=C.list.findIndex(function(c){return c.id===id});if(i<0)return;S.modal={cam:1};
+  var pad=function(d,g){return '<button class="btn" data-cd="'+d+'" data-cid="'+id+'" style="width:100%;padding:0;'+(g||'')+'">'+({up:'▲',down:'▼',left:'◀',right:'▶'})[d]+'</button>'};
+  modalShell('<div class="tt" style="font-size:24px;line-height:28px">'+esc(camName(C.list[i],i))+'</div>'+
+    '<div style="position:relative;margin-top:var(--space-3)"><img id="camlive" src="'+esc(C.base)+'/mjpeg/'+id+'" alt="" draggable="false" style="width:100%;aspect-ratio:16/9;object-fit:contain;border-radius:var(--radius-card-md);background:rgba(0,0,0,.45)"></div>'+
+    '<div class="hint" style="margin-top:var(--space-2)">La imagen se actualiza cada pocos segundos (viene por la nube del fabricante).</div>'+
+    '<div style="display:grid;grid-template-columns:repeat(3,64px);grid-template-rows:repeat(3,52px);gap:8px;justify-content:center;margin:var(--space-4) 0"><span></span>'+pad('up')+'<span></span>'+pad('left')+'<span></span>'+pad('right')+'<span></span>'+pad('down')+'<span></span></div>'+
+    '<div style="display:flex;gap:var(--space-3)"><button class="btn" id="camren" style="flex:1">Renombrar</button><button class="btn p" id="m_x" style="flex:1">Cerrar</button></div>');
+  $('#m_x').onclick=function(){var im=$('#camlive');if(im)im.removeAttribute('src');closeModal()};
+  $('#camren').onclick=function(){var v=prompt('Nombre de la cámara',camNames()[id]||'');if(v!==null){var n=camNames();n[id]=v.trim();try{localStorage.setItem('vida-cam-names',JSON.stringify(n))}catch(e){}$('#m_x').onclick()}}}
+var camHold=null;
+document.addEventListener('pointerdown',function(e){var b=e.target.closest&&e.target.closest('[data-cd]');if(!b||!S.cam||!S.cam.base)return;
+  var go=function(){fetch(S.cam.base+'/ptz/'+b.dataset.cid+'/'+b.dataset.cd+'?ms=350').catch(function(){})};go();camHold=setInterval(go,450)});
+['pointerup','pointercancel','pointerleave'].forEach(function(ev){document.addEventListener(ev,function(){if(camHold){clearInterval(camHold);camHold=null}})});
+document.addEventListener('click',function(e){var t=e.target.closest&&e.target.closest('[data-camlive],#camretry,#camset');if(!t)return;
+  if(t.dataset.camlive){camLive(t.dataset.camlive);return}
+  if(t.id==='camretry'){S.cam.tried=false;camConnect();return}
   var v=prompt('Dirección del puente de cámaras (ej. http://192.168.1.23:8765)',camBase());
-  if(v&&/^https?:\/\//.test(v.trim())){try{localStorage.setItem('vida-cam-bridge',v.trim().replace(/\/$/,''))}catch(x){}render()}});
+  if(v&&/^https?:\/\//.test(v.trim())){try{localStorage.setItem('vida-cam-bridge',v.trim().replace(/\/$/,''))}catch(x){}S.cam.tried=false;S.cam.base='';S.cam.list=null;camConnect()}});
 // ---------- MENÚ
 SCREENS.menu=function(){
   var subs=itemsOf('sub'),pend=S.todo.filter(function(i){return i.status!=='completed'}),eq=S.D.equip||[];
