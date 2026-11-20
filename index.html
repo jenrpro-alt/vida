@@ -1888,6 +1888,15 @@ function loadMonth(y,m){
   });
 }
 function evDays(e){var out=[],a=e.s.slice(0,10),z=e.en?e.en.slice(0,10):a;if(e.day){z=addDays(z,-1);if(z<a)z=a}else if(e.en&&e.en.length>10&&e.en.slice(11,16)==='00:00'&&z>a)z=addDays(z,-1);var n=a,g=0;while(n<=z&&g<35){out.push(n);n=addDays(n,1);g++}return out}
+function loadCalReg(){if(S.calRegBusy||!S.ready)return;S.calRegBusy=true;send({type:'config/entity_registry/list'},function(r){S.calRegBusy=false;S.calReg=((r&&r.result)||[]).filter(function(e){return e.entity_id.indexOf('calendar.')===0}).map(function(e){return{id:e.entity_id,n:e.name||e.original_name||e.entity_id,dis:!!e.disabled_by}});softRender()})}
+function calDiag(){
+  if(!S.calReg){loadCalReg()}
+  var off=(S.calReg||[]).filter(function(c){return c.dis}),on=S.cals;
+  var b=on.length?'<div class="rows">'+on.map(function(c){return '<div class="row" style="cursor:default"><i class="cd" style="background:'+c.c+'"></i><div class="rt"><div class="n" style="font-size:15px">'+esc(c.n)+'</div></div><span class="on-t">Activo</span></div>'}).join('')+'</div>':'';
+  if(off.length)b+='<div class="rows">'+off.map(function(c){return '<div class="row" style="cursor:default"><i class="cd" style="background:#888"></i><div class="rt"><div class="n" style="font-size:15px">'+esc(c.n)+'</div><div class="s">Desactivado en Home Assistant</div></div><button class="btn" data-cen="'+esc(c.id)+'" style="padding:6px 14px">Activar</button></div>'}).join('')+'</div>';
+  b+='<div class="hint">¿Falta un calendario de otra cuenta? En esa cuenta de Google, compártelo con la cuenta que conectaste a Home Assistant y acéptalo; en Google Calendar debe verse en "Otros calendarios". Después recarga la integración Google Calendar en Home Assistant (Ajustes → Dispositivos y servicios → Google Calendar → ⋮ → Recargar) y pulsa "Buscar de nuevo".</div><button class="btn" id="acr" style="width:100%;margin-top:8px">Buscar de nuevo</button>';
+  return card('Calendarios detectados · '+on.length,b);
+}
 SCREENS.agenda=function(){
   var h=hdr('Calendario','Google Calendar');
   if(!S.cals.length)return h+card('Calendarios','<div class="empty">Home Assistant todavía no tiene calendarios conectados.</div><div class="hint">Conecta tu Google Calendar en Home Assistant (Ajustes → Dispositivos y servicios → Añadir integración → Google Calendar). Si prefieres no crear credenciales en Google Cloud, usa la integración Remote Calendar con la dirección secreta en formato iCal de tu calendario. Apenas aparezca un calendario, se ve aquí solo.</div>');
@@ -1908,7 +1917,7 @@ SCREENS.agenda=function(){
   h+='<div class="card"><div style="display:flex;align-items:center;justify-content:space-between;gap:8px"><span class="lab">'+MES[m]+' '+y+(rec&&rec.loading?' · cargando…':'')+'</span><span style="display:flex;gap:6px"><button class="btn" id="ato" style="padding:6px 14px">Hoy</button><button class="circ s" id="apv" aria-label="Mes anterior">‹</button><button class="circ s" id="anx" aria-label="Mes siguiente">›</button></span></div>'+lay+'<div class="mcal">'+cells+'</div></div>';
   if(sel){var L=byD[sel]||[],dd=new Date(sel+'T00:00'),tt=dd.toLocaleDateString('es-CO',{weekday:'long',day:'numeric',month:'long'});tt=tt.charAt(0).toUpperCase()+tt.slice(1);
     h+=card(tt,L.length?'<div class="rows">'+L.map(function(e){var hr=e.day?'Todo el día':new Date(e.s).toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'})+(e.en&&e.en.length>10?' – '+new Date(e.en).toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'}):'');return '<div class="row" style="cursor:default"><i class="cd" style="background:'+col(e.c)+'"></i><div class="rt"><div class="n" style="font-size:15px">'+esc(e.t)+'</div><div class="s">'+hr+(e.loc?' · '+esc(e.loc):'')+'</div></div></div>'}).join('')+'</div>':'<div class="empty">Sin eventos</div>')}
-  return h;
+  return h+calDiag();
 };
 // ---------- Recompras (categorías y subcategorías)
 var RC=[['Despensa',['Granos y pastas','Aceites y condimentos','Enlatados y salsas','Snacks y dulces','Café y té','Harinas y repostería']],['Frescos',['Frutas y verduras','Lácteos y huevos','Carnes y pescado','Congelados']],['Bebidas',['Agua','Gaseosas y jugos','Licores']],['Aseo del hogar',['Cocina','Baño','Ropa','Bolsas y desechables']],['Cuidado personal',['Higiene','Afeitado','Piel y cabello','Botiquín']],['Mascota',['Comida','Arena','Juguetes y salud']],['Tecnología y equipos',['Pilas y baterías','Cables y accesorios','Repuestos de Bartolo','Almacenamiento']],['Moto',['Aceite y lubricantes','Limpieza','Repuestos']],['Otros',['General']]];
@@ -2109,6 +2118,8 @@ function bind(){
   q('[data-rce]',function(b){b.onclick=function(ev){ev.stopPropagation();rcModal(b.dataset.rce,function(){softRender()})}});
   q('[data-rcf]',function(b){b.onclick=function(){S.rcf=b.dataset.rcf;render()}});
   var apv=$('#apv');if(apv){apv.onclick=function(){S.am--;S.asel='';render()};$('#anx').onclick=function(){S.am++;S.asel='';render()};$('#ato').onclick=function(){S.am=0;S.asel='';render()}}
+  q('[data-cen]',function(b){b.onclick=function(){var id=b.dataset.cen;b.textContent='Activando…';send({type:'config/entity_registry/update',entity_id:id,disabled_by:null},function(r){S.calReg=null;setTimeout(function(){loadEvents();S.evx={};softRender()},35000);softRender()})}});
+  var acr=$('#acr');if(acr)acr.onclick=function(){S.calReg=null;S.evx={};loadEvents();loadCalReg()};
   q('[data-ad]',function(b){b.onclick=function(){S.asel=b.dataset.ad;render()}});
   q('[data-ti]',function(b){b.onclick=function(){var it=S.todo.filter(function(i){return(i.uid||i.summary)===b.dataset.ti})[0];if(!it)return;call('todo','update_item',{item:it.uid||it.summary,status:it.status==='completed'?'needs_action':'completed'},{entity_id:todoEnt()});setTimeout(loadTodo,400)}});
   var tc=$('#tc');if(tc)tc.onclick=function(){call('todo','remove_completed_items',{},{entity_id:todoEnt()});setTimeout(loadTodo,400)};
