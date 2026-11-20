@@ -1889,7 +1889,7 @@ function monthKey(y,m){return y+'-'+pad(m+1)}
 function loadMonth(y,m){
   var k=monthKey(y,m),r0=S.evx[k];if(r0&&(r0.loading||Date.now()-r0.t<120000))return;
   if(!S.cals.length)return;
-  var first=new Date(y,m,1),off=(first.getDay()+6)%7,a=new Date(y,m,1-off),b=new Date(a.getTime()+42*864e5);
+  var first=new Date(y,m,1),off=first.getDay(),a=new Date(y,m,1-off),b=new Date(a.getTime()+42*864e5);
   var rec={loading:1,t:Date.now(),list:[]};S.evx[k]=rec;var left=S.cals.length;
   S.cals.forEach(function(c){
     fetch(S.base+'/api/calendars/'+c.id+'?start='+encodeURIComponent(a.toISOString())+'&end='+encodeURIComponent(b.toISOString()),{headers:{Authorization:'Bearer '+S.tok}})
@@ -1912,10 +1912,11 @@ function calView(){
   evs.forEach(function(e){if(S.D.hid[e.c])return;var dk=e.t+'|'+e.s;if(seen[dk])return;seen[dk]=1;evDays(e).forEach(function(d){(byD[d]=byD[d]||[]).push(e)})});
   Object.keys(byD).forEach(function(d){byD[d].sort(function(a,b){return a.day!==b.day?(a.day?-1:1):(a.s<b.s?-1:1)})});
   var col=function(id){return(S.cals.filter(function(c){return c.id===id})[0]||{}).c||'#888'};
-  var first=new Date(y,m,1),off=(first.getDay()+6)%7,tk=key(now),cells='';
-  ['L','M','X','J','V','S','D'].forEach(function(w){cells+='<div class="wh">'+w+'</div>'});
+  var first=new Date(y,m,1),off=first.getDay(),tk=key(now),cells='';
+  ['D','L','M','X','J','V','S'].forEach(function(w){cells+='<div class="wh">'+w+'</div>'});
   var sel=S.asel||(S.am===0?tk:'');
-  for(var i=0;i<42;i++){
+  var nCell=Math.ceil((off+new Date(y,m+1,0).getDate())/7)*7;
+  for(var i=0;i<nCell;i++){
     var d=new Date(y,m,1-off+i),k=key(d),L=byD[k]||[],out=d.getMonth()!==m;
     var evh=L.slice(0,3).map(function(e){return '<div class="ev" style="--c:'+col(e.c)+'">'+(e.day?'':new Date(e.s).toLocaleTimeString('es-CO',{hour:'numeric',minute:'2-digit'}).replace(/\s?([ap])\.?\s?m\.?/i,'$1')+' ')+esc(e.t)+'</div>'}).join('');
     cells+='<button class="mday'+(out?' out':'')+(k===tk?' today':'')+(k===sel?' sel':'')+'" data-ad="'+k+'"><span class="dn">'+d.getDate()+'</span><span class="evs">'+evh+'</span>'+(L.length>3?'<span class="more">+'+(L.length-3)+' más</span>':'')+'</button>';
