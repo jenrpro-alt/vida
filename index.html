@@ -1625,6 +1625,7 @@ SCREENS.home=function(){
   var pct=eq.length?Math.round(eqOk*100/eq.length):0,nev=S.evs.filter(function(e){return !S.D.hid[e.c]})[0];
   out+='<div class="card hero"><div class="ring" style="--p:'+pct+'"><div>'+pct+'%<small>listo</small></div></div><div class="rt"><span class="lab">Prioridad'+(nev?' · '+esc(new Date(nev.s.length>10?nev.s:nev.s+'T00:00').toLocaleDateString('es-CO',{weekday:'short',day:'numeric'})):'')+'</span><div style="font-size:20px;line-height:26px;font-weight:500;letter-spacing:-.01em;margin:4px 0">'+(nev?esc(nev.t):'Sin eventos próximos')+'</div><div class="hint">Equipos: '+eqOk+' de '+eq.length+' listos</div></div></div>';
   out+='<div class="tiles">'+T.map(function(t){return '<button class="tile" data-go="'+t[5]+'"><span class="t">'+t[1]+'</span><span class="go">'+ic('M7 17L17 7M9 7h8v8',18)+'</span><span class="b">'+esc(t[3])+'</span><span class="f">'+esc(t[4])+'</span></button>'}).join('')+'</div>';
+  out+=S.cals.length?calView():agendaCard();
   out+='</div><div class="hcol">';
   if(bi)out+='<button class="bhero sm" data-go="bartolo"><img src="'+BART_IMG+'" alt="" draggable="false"><div class="bl"><div><small>BPMIG</small><h2>Bartolo</h2></div><div style="display:flex;gap:var(--space-6)"><div><small>Estado</small><b>'+esc(STM[bi.st]||bi.st)+'</b></div><div><small>Batería</small><b>'+(bi.bat!=null?bi.bat+' %':'—')+'</b></div></div></div></button>';
   out+='<button class="bhero mo sm" data-go="moto"><img src="'+MOTO_IMG1+'" alt="" draggable="false"><div class="bl"><div><small>TVS</small><h2>Apache</h2></div><div style="display:flex;gap:var(--space-6)"><div><small>Odómetro</small><b>'+(M?M.odo.toLocaleString('es-CO')+' km':'—')+'</b></div><div><small>Gasolina</small><b>'+(M?motoCalc(M).pct+' %':'—')+'</b></div></div></div></button>';
@@ -1633,7 +1634,6 @@ SCREENS.home=function(){
   if(tuyaDown())al.unshift({name:'Tuya se desconectó',cat:'bartolo',nodate:1,sub:'Reconecta la integración en Home Assistant',go:'pend'});
   if(al.length)out+=card('Hoy',tiles(al.slice(0,6).map(function(it){return row({ic:it.nodate?IC.robot:IC[CATS[it.cat].ic],t:esc(it.name),s:it.nodate?(it.sub||'Bartolo'):CATS[it.cat].n+(it.where?' · '+esc(it.where):''),r:it.nodate?'<span class="badge bad">Revisar</span>':itemBadge(it),at:'data-go="'+(it.nodate?(it.go||'bartolo'):it.cat==='sub'?'subs':it.cat)+'"'})})));
   out+=bitacoraCard();
-  out+=agendaCard();
   out+=pendCard(true);
   return out+'</div></div>';
 };
@@ -1897,10 +1897,8 @@ function calDiag(){
   b+='<div class="hint">¿Falta un calendario de otra cuenta? En esa cuenta de Google, compártelo con la cuenta que conectaste a Home Assistant y acéptalo; en Google Calendar debe verse en "Otros calendarios". Después recarga la integración Google Calendar en Home Assistant (Ajustes → Dispositivos y servicios → Google Calendar → ⋮ → Recargar) y pulsa "Buscar de nuevo".</div><button class="btn" id="acr" style="width:100%;margin-top:8px">Buscar de nuevo</button>';
   return card('Calendarios detectados · '+on.length,b);
 }
-SCREENS.agenda=function(){
-  var h=hdr('Calendario','Google Calendar');
-  if(!S.cals.length)return h+card('Calendarios','<div class="empty">Home Assistant todavía no tiene calendarios conectados.</div><div class="hint">Conecta tu Google Calendar en Home Assistant (Ajustes → Dispositivos y servicios → Añadir integración → Google Calendar). Si prefieres no crear credenciales en Google Cloud, usa la integración Remote Calendar con la dirección secreta en formato iCal de tu calendario. Apenas aparezca un calendario, se ve aquí solo.</div>');
-  var now=new Date(),vd=new Date(now.getFullYear(),now.getMonth()+S.am,1),y=vd.getFullYear(),m=vd.getMonth();loadMonth(y,m);
+function calView(){
+  var h='',now=new Date(),vd=new Date(now.getFullYear(),now.getMonth()+S.am,1),y=vd.getFullYear(),m=vd.getMonth();loadMonth(y,m);
   var rec=S.evx[monthKey(y,m)],evs=rec?rec.list:[],seen={},byD={};
   evs.forEach(function(e){if(S.D.hid[e.c])return;var dk=e.t+'|'+e.s;if(seen[dk])return;seen[dk]=1;evDays(e).forEach(function(d){(byD[d]=byD[d]||[]).push(e)})});
   Object.keys(byD).forEach(function(d){byD[d].sort(function(a,b){return a.day!==b.day?(a.day?-1:1):(a.s<b.s?-1:1)})});
@@ -1917,7 +1915,12 @@ SCREENS.agenda=function(){
   h+='<div class="card"><div style="display:flex;align-items:center;justify-content:space-between;gap:8px"><span class="lab">'+MES[m]+' '+y+(rec&&rec.loading?' · cargando…':'')+'</span><span style="display:flex;gap:6px"><button class="btn" id="ato" style="padding:6px 14px">Hoy</button><button class="circ s" id="apv" aria-label="Mes anterior">‹</button><button class="circ s" id="anx" aria-label="Mes siguiente">›</button></span></div>'+lay+'<div class="mcal">'+cells+'</div></div>';
   if(sel){var L=byD[sel]||[],dd=new Date(sel+'T00:00'),tt=dd.toLocaleDateString('es-CO',{weekday:'long',day:'numeric',month:'long'});tt=tt.charAt(0).toUpperCase()+tt.slice(1);
     h+=card(tt,L.length?'<div class="rows">'+L.map(function(e){var hr=e.day?'Todo el día':new Date(e.s).toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'})+(e.en&&e.en.length>10?' – '+new Date(e.en).toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'}):'');return '<div class="row" style="cursor:default"><i class="cd" style="background:'+col(e.c)+'"></i><div class="rt"><div class="n" style="font-size:15px">'+esc(e.t)+'</div><div class="s">'+hr+(e.loc?' · '+esc(e.loc):'')+'</div></div></div>'}).join('')+'</div>':'<div class="empty">Sin eventos</div>')}
-  return h+calDiag();
+  return h;
+}
+SCREENS.agenda=function(){
+  var h=hdr('Calendario','Google Calendar');
+  if(!S.cals.length)return h+card('Calendarios','<div class="empty">Home Assistant todavía no tiene calendarios conectados.</div><div class="hint">Conecta tu Google Calendar en Home Assistant (Ajustes → Dispositivos y servicios → Añadir integración → Google Calendar). Si prefieres no crear credenciales en Google Cloud, usa la integración Remote Calendar con la dirección secreta en formato iCal de tu calendario. Apenas aparezca un calendario, se ve aquí solo.</div>');
+  return h+calView()+calDiag();
 };
 // ---------- Recompras (categorías y subcategorías)
 var RC=[['Despensa',['Granos y pastas','Aceites y condimentos','Enlatados y salsas','Snacks y dulces','Café y té','Harinas y repostería']],['Frescos',['Frutas y verduras','Lácteos y huevos','Carnes y pescado','Congelados']],['Bebidas',['Agua','Gaseosas y jugos','Licores']],['Aseo del hogar',['Cocina','Baño','Ropa','Bolsas y desechables']],['Cuidado personal',['Higiene','Afeitado','Piel y cabello','Botiquín']],['Mascota',['Comida','Arena','Juguetes y salud']],['Tecnología y equipos',['Pilas y baterías','Cables y accesorios','Repuestos de Bartolo','Almacenamiento']],['Moto',['Aceite y lubricantes','Limpieza','Repuestos']],['Otros',['General']]];
