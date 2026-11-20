@@ -1784,11 +1784,21 @@ SCREENS.bartolo=function(){
 };
 // ---------- Cámaras
 SCREENS.camaras=function(){
-  var cams=find(/./,['camera']).filter(function(e){return !/bartolo/i.test(nm(e))&&!/bartolo/i.test(e.entity_id)}),h=hdr('Cámaras',cams.length?cams.length+(cams.length===1?' cámara':' cámaras'):'Sin cámaras');
-  if(!cams.length)return h+card('Aún no hay cámaras','<div class="hint">Las cámaras CareCam Pro hablan ONVIF. Para sumarlas: Home Assistant → Configuración → Dispositivos y servicios → Agregar integración → ONVIF. Pon la IP de la cámara (está en tu router), usuario y contraseña de la cámara. Cuando aparezcan, se ven aquí solas.</div><div class="hint">El puerto ONVIF depende del modelo: prueba 80, 8899 y 6688.</div>');
-  cams.forEach(function(e){var p=e.attributes&&e.attributes.entity_picture;h+=gcard(esc(nm(e)),e.state==='unavailable'?'sin señal':'en vivo',e.state==='unavailable'?'bad':'ok',(p?'<img class="cam" data-src="'+esc(S.base+p)+'" src="'+esc(S.base+p)+'" alt="" draggable="false" style="width:100%;border-radius:var(--radius-card-md);background:rgba(0,0,0,.35);min-height:140px">':'<div class="empty">Sin imagen</div>'))});
+  var base=camBase(),h=hdr('Cámaras','CareCam Pro · puente en el portátil');
+  h+='<div class="card" style="padding:0;overflow:hidden"><div id="camwrap" style="height:calc(100vh - 250px);min-height:380px;display:flex;align-items:center;justify-content:center"><div class="hint" style="padding:var(--space-5)">Conectando con el puente de cámaras…</div></div></div>';
+  h+='<div class="card"><span class="lab">Puente de cámaras</span><div class="hint" id="cambase">'+esc(base)+'</div><button class="btn f" id="camset">Cambiar dirección</button></div>';
+  setTimeout(camLoad,0);
   return h};
-setInterval(function(){if(S.scr!=='camaras')return;document.querySelectorAll('img.cam').forEach(function(im){var u=im.getAttribute('data-src');im.src=u+(u.indexOf('?')>=0?'&':'?')+'t='+Date.now()})},3000);
+function camBase(){var v='';try{v=localStorage.getItem('vida-cam-bridge')||''}catch(e){}return (v||'http://192.168.1.23:8765').replace(/\/$/,'')}
+function camLoad(){
+  var w=document.getElementById('camwrap');if(!w)return;var base=camBase();
+  var fail=function(){var w2=document.getElementById('camwrap');if(w2)w2.innerHTML='<div class="hint" style="padding:var(--space-5)">No hay conexión con el puente de cámaras ('+esc(base)+'). Revisa que el portátil esté encendido y en la misma red. Si cambió de IP, ajusta la dirección abajo.</div>'};
+  var t=setTimeout(fail,6000);
+  fetch(base+'/health',{cache:'no-store'}).then(function(r){return r.json()}).then(function(){clearTimeout(t);var w2=document.getElementById('camwrap');
+    if(w2)w2.innerHTML='<iframe src="'+esc(base)+'/ui" style="border:0;width:100%;height:100%;display:block" allow="fullscreen"></iframe>'}).catch(function(){clearTimeout(t);fail()})}
+document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('#camset');if(!b)return;
+  var v=prompt('Dirección del puente de cámaras (ej. http://192.168.1.23:8765)',camBase());
+  if(v&&/^https?:\/\//.test(v.trim())){try{localStorage.setItem('vida-cam-bridge',v.trim().replace(/\/$/,''))}catch(x){}render()}});
 // ---------- MENÚ
 SCREENS.menu=function(){
   var subs=itemsOf('sub'),pend=S.todo.filter(function(i){return i.status!=='completed'}),eq=S.D.equip||[];
