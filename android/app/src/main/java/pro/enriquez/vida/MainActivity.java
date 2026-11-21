@@ -223,6 +223,8 @@ public class MainActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-        if (web.canGoBack()) web.goBack(); else moveTaskToBack(true);
+        web.evaluateJavascript("(function(){return !!(window.__vidaBack&&window.__vidaBack())})()", v -> {
+            if (!"true".equals(v)) moveTaskToBack(true);
+        });
     }
 }

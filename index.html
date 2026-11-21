@@ -1586,6 +1586,7 @@ function bartoloInfo(){var v=find(/bartolo/i,['vacuum'])[0];if(!v)return null;va
 var STM={cleaning:'Limpiando',docked:'En la base',returning:'Volviendo',paused:'En pausa',idle:'Inactivo',error:'Error',unavailable:'No disponible'};
 // ---------- Router
 function go(s){S.hs.push(S.scr);S.scr=s;S.sel='';S.msel='';S.fe=false;closeModalQuiet();render();window.scrollTo(0,0)}
+window.__vidaBack=function(){if(S.modal||$('#md')&&$('#md').innerHTML){closeModal();return true}if(S.scr!=='home'){backScr();return true}return false};
 function backScr(){S.scr=S.hs.length?S.hs.pop():'home';closeModalQuiet();render();window.scrollTo(0,0)}
 function tab(s){S.scr=s;S.hs=[];S.sel='';S.msel='';S.fe=false;closeModalQuiet();render();window.scrollTo(0,0)}
 function closeModalQuiet(){S.modal=null;var m=$('#md');if(m)m.innerHTML=''}
