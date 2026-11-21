@@ -1,8 +1,7 @@
 <resources>
     <style name="Theme.Vida" parent="android:Theme.Material.NoActionBar">
         <item name="android:windowBackground">@android:color/black</item>
-        <item name="android:statusBarColor">#06121F</item>
+        <item name="android:statusBarColor">#0B3D4A</item>
         <item name="android:navigationBarColor">#06121F</item>
-        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
     </style>
 </resources>

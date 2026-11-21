@@ -173,20 +173,16 @@ public class MainActivity extends Activity {
         h.postDelayed(this::load, 1500);
     }
 
+    // Barras del sistema siempre visibles y fijas: el gesto de bajar abre las notificaciones
+    // de una vez y la interfaz no cambia de tamaño.
     private void immersive() {
         Window w = getWindow();
         if (Build.VERSION.SDK_INT >= 30) {
-            w.setDecorFitsSystemWindows(false);
+            w.setDecorFitsSystemWindows(true);
             WindowInsetsController c = w.getInsetsController();
-            if (c != null) {
-                c.hide(WindowInsets.Type.systemBars());
-                c.setSystemBarsBehavior(WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
-            }
+            if (c != null) c.show(WindowInsets.Type.systemBars());
         } else {
-            w.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+            w.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
         }
     }
 
